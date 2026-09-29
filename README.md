@@ -19,8 +19,6 @@ docker compose ps
 
 Si se clona el proyecto en otra computadora, copiar `.env.example` a `.env` y definir `POSTGRES_PASSWORD`, `ADMIN_EMAIL` y `ADMIN_PASSWORD_HASH` antes de arrancar. Ejecutar `python create_admin_hash.py` para generar la línea del hash y copiarla a `.env`; la contraseña se introduce sin mostrarla. La configuración local ya está en `.env`, excluido de Git. El puerto se puede cambiar con `APP_PORT`.
 
-## Detener
-
 ## Despliegue en EasyPanel con PostgreSQL existente
 
 1. En el mismo proyecto que PostgreSQL, crear un servicio **App**.
