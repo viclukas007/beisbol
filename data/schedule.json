@@ -1,0 +1,1239 @@
+{
+  "source": "ROL 2026-2027 LISTO.xlsx",
+  "sha256": "3c9d48e22d090209eb731c4f2a1c577bda68fec165eb5b6514b946c75c76c281",
+  "metadata": {
+    "season": "2026-2027",
+    "league": "Liga de Sóftbol Nocturna Varonil",
+    "club": "Club Campestre de Yucatán A.C.",
+    "sheet": "Primera Vuelta",
+    "confirmedTurn": 1,
+    "secondTurnConfirmed": false,
+    "gameCount": 120,
+    "rounds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
+    "start": "2026-08-31",
+    "end": "2026-12-17",
+    "notes": [
+      "18 DE SEPTIEMBRE ÚLTIMO DÍA PARA LA ADICIÓN DE JUGADORES A LAS LISTAS DE EQUIPOS INCOMPLETOS",
+      "A PARTIR DE LA 6.ª JORNADA, TODOS LOS EQUIPOS DEBERÁN TENER UNIFORMES COMPLETOS."
+    ]
+  },
+  "games": [
+    {
+      "round": 1,
+      "date": "2026-08-31",
+      "time": "20:00",
+      "homeTeamId": 9,
+      "awayTeamId": 6,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B9"
+    },
+    {
+      "round": 1,
+      "date": "2026-08-31",
+      "time": "22:00",
+      "homeTeamId": 2,
+      "awayTeamId": 12,
+      "notes": "05/11/2026 *",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B10"
+    },
+    {
+      "round": 1,
+      "date": "2026-09-01",
+      "time": "20:00",
+      "homeTeamId": 14,
+      "awayTeamId": 5,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B11"
+    },
+    {
+      "round": 1,
+      "date": "2026-09-01",
+      "time": "22:00",
+      "homeTeamId": 10,
+      "awayTeamId": 11,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B12"
+    },
+    {
+      "round": 1,
+      "date": "2026-09-02",
+      "time": "20:00",
+      "homeTeamId": 16,
+      "awayTeamId": 3,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B13"
+    },
+    {
+      "round": 1,
+      "date": "2026-09-02",
+      "time": "22:00",
+      "homeTeamId": 8,
+      "awayTeamId": 13,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B14"
+    },
+    {
+      "round": 1,
+      "date": "2026-09-03",
+      "time": "20:00",
+      "homeTeamId": 1,
+      "awayTeamId": 15,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B15"
+    },
+    {
+      "round": 1,
+      "date": "2026-09-03",
+      "time": "22:00",
+      "homeTeamId": 7,
+      "awayTeamId": 4,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B16"
+    },
+    {
+      "round": 2,
+      "date": "2026-09-07",
+      "time": "20:00",
+      "homeTeamId": 5,
+      "awayTeamId": 7,
+      "notes": "05/11/2026 *",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B19"
+    },
+    {
+      "round": 2,
+      "date": "2026-09-07",
+      "time": "22:00",
+      "homeTeamId": 11,
+      "awayTeamId": 14,
+      "notes": "16/09/2026 *",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B20"
+    },
+    {
+      "round": 2,
+      "date": "2026-09-08",
+      "time": "20:00",
+      "homeTeamId": 9,
+      "awayTeamId": 10,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B21"
+    },
+    {
+      "round": 2,
+      "date": "2026-09-08",
+      "time": "22:00",
+      "homeTeamId": 3,
+      "awayTeamId": 2,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B22"
+    },
+    {
+      "round": 2,
+      "date": "2026-09-09",
+      "time": "20:00",
+      "homeTeamId": 4,
+      "awayTeamId": 8,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B23"
+    },
+    {
+      "round": 2,
+      "date": "2026-09-09",
+      "time": "22:00",
+      "homeTeamId": 6,
+      "awayTeamId": 16,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B24"
+    },
+    {
+      "round": 2,
+      "date": "2026-09-10",
+      "time": "20:00",
+      "homeTeamId": 15,
+      "awayTeamId": 12,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B25"
+    },
+    {
+      "round": 2,
+      "date": "2026-09-10",
+      "time": "22:00",
+      "homeTeamId": 13,
+      "awayTeamId": 1,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B26"
+    },
+    {
+      "round": 3,
+      "date": "2026-09-14",
+      "time": "20:00",
+      "homeTeamId": 7,
+      "awayTeamId": 13,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B29"
+    },
+    {
+      "round": 3,
+      "date": "2026-09-14",
+      "time": "22:00",
+      "homeTeamId": 10,
+      "awayTeamId": 5,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B30"
+    },
+    {
+      "round": 3,
+      "date": "2026-09-17",
+      "time": "20:00",
+      "homeTeamId": 2,
+      "awayTeamId": 15,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B31"
+    },
+    {
+      "round": 3,
+      "date": "2026-09-17",
+      "time": "22:00",
+      "homeTeamId": 16,
+      "awayTeamId": 12,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B32"
+    },
+    {
+      "round": 4,
+      "date": "2026-09-21",
+      "time": "20:00",
+      "homeTeamId": 13,
+      "awayTeamId": 4,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B35"
+    },
+    {
+      "round": 4,
+      "date": "2026-09-21",
+      "time": "22:00",
+      "homeTeamId": 14,
+      "awayTeamId": 9,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B36"
+    },
+    {
+      "round": 4,
+      "date": "2026-09-22",
+      "time": "20:00",
+      "homeTeamId": 16,
+      "awayTeamId": 10,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B37"
+    },
+    {
+      "round": 4,
+      "date": "2026-09-22",
+      "time": "22:00",
+      "homeTeamId": 15,
+      "awayTeamId": 3,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B38"
+    },
+    {
+      "round": 4,
+      "date": "2026-09-23",
+      "time": "20:00",
+      "homeTeamId": 2,
+      "awayTeamId": 6,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B39"
+    },
+    {
+      "round": 4,
+      "date": "2026-09-23",
+      "time": "22:00",
+      "homeTeamId": 7,
+      "awayTeamId": 11,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B40"
+    },
+    {
+      "round": 4,
+      "date": "2026-09-24",
+      "time": "20:00",
+      "homeTeamId": 12,
+      "awayTeamId": 1,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B41"
+    },
+    {
+      "round": 4,
+      "date": "2026-09-24",
+      "time": "22:00",
+      "homeTeamId": 8,
+      "awayTeamId": 5,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B42"
+    },
+    {
+      "round": 5,
+      "date": "2026-09-28",
+      "time": "20:00",
+      "homeTeamId": 5,
+      "awayTeamId": 13,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B45"
+    },
+    {
+      "round": 5,
+      "date": "2026-09-28",
+      "time": "22:00",
+      "homeTeamId": 6,
+      "awayTeamId": 15,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B46"
+    },
+    {
+      "round": 5,
+      "date": "2026-09-29",
+      "time": "20:00",
+      "homeTeamId": 12,
+      "awayTeamId": 3,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B47"
+    },
+    {
+      "round": 5,
+      "date": "2026-09-29",
+      "time": "22:00",
+      "homeTeamId": 16,
+      "awayTeamId": 14,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B48"
+    },
+    {
+      "round": 5,
+      "date": "2026-09-30",
+      "time": "20:00",
+      "homeTeamId": 10,
+      "awayTeamId": 2,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B49"
+    },
+    {
+      "round": 5,
+      "date": "2026-09-30",
+      "time": "22:00",
+      "homeTeamId": 11,
+      "awayTeamId": 8,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B50"
+    },
+    {
+      "round": 5,
+      "date": "2026-10-01",
+      "time": "20:00",
+      "homeTeamId": 7,
+      "awayTeamId": 9,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B51"
+    },
+    {
+      "round": 5,
+      "date": "2026-10-01",
+      "time": "22:00",
+      "homeTeamId": 1,
+      "awayTeamId": 4,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B52"
+    },
+    {
+      "round": 6,
+      "date": "2026-10-05",
+      "time": "20:00",
+      "homeTeamId": 2,
+      "awayTeamId": 14,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B58"
+    },
+    {
+      "round": 6,
+      "date": "2026-10-05",
+      "time": "22:00",
+      "homeTeamId": 15,
+      "awayTeamId": 10,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B59"
+    },
+    {
+      "round": 6,
+      "date": "2026-10-06",
+      "time": "20:00",
+      "homeTeamId": 8,
+      "awayTeamId": 9,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B60"
+    },
+    {
+      "round": 6,
+      "date": "2026-10-06",
+      "time": "22:00",
+      "homeTeamId": 4,
+      "awayTeamId": 5,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B61"
+    },
+    {
+      "round": 6,
+      "date": "2026-10-07",
+      "time": "20:00",
+      "homeTeamId": 7,
+      "awayTeamId": 16,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B62"
+    },
+    {
+      "round": 6,
+      "date": "2026-10-07",
+      "time": "22:00",
+      "homeTeamId": 13,
+      "awayTeamId": 11,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B63"
+    },
+    {
+      "round": 6,
+      "date": "2026-10-08",
+      "time": "20:00",
+      "homeTeamId": 3,
+      "awayTeamId": 1,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B64"
+    },
+    {
+      "round": 6,
+      "date": "2026-10-08",
+      "time": "22:00",
+      "homeTeamId": 12,
+      "awayTeamId": 6,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B65"
+    },
+    {
+      "round": 7,
+      "date": "2026-10-12",
+      "time": "20:00",
+      "homeTeamId": 1,
+      "awayTeamId": 5,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B68"
+    },
+    {
+      "round": 7,
+      "date": "2026-10-12",
+      "time": "22:00",
+      "homeTeamId": 3,
+      "awayTeamId": 6,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B69"
+    },
+    {
+      "round": 7,
+      "date": "2026-10-13",
+      "time": "20:00",
+      "homeTeamId": 14,
+      "awayTeamId": 15,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B70"
+    },
+    {
+      "round": 7,
+      "date": "2026-10-13",
+      "time": "22:00",
+      "homeTeamId": 9,
+      "awayTeamId": 13,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B71"
+    },
+    {
+      "round": 7,
+      "date": "2026-10-14",
+      "time": "20:00",
+      "homeTeamId": 2,
+      "awayTeamId": 7,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B72"
+    },
+    {
+      "round": 7,
+      "date": "2026-10-14",
+      "time": "22:00",
+      "homeTeamId": 4,
+      "awayTeamId": 11,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B73"
+    },
+    {
+      "round": 7,
+      "date": "2026-10-15",
+      "time": "20:00",
+      "homeTeamId": 8,
+      "awayTeamId": 16,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B74"
+    },
+    {
+      "round": 7,
+      "date": "2026-10-15",
+      "time": "22:00",
+      "homeTeamId": 10,
+      "awayTeamId": 12,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B75"
+    },
+    {
+      "round": 8,
+      "date": "2026-10-19",
+      "time": "20:00",
+      "homeTeamId": 13,
+      "awayTeamId": 16,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B78"
+    },
+    {
+      "round": 8,
+      "date": "2026-10-19",
+      "time": "22:00",
+      "homeTeamId": 8,
+      "awayTeamId": 2,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B79"
+    },
+    {
+      "round": 8,
+      "date": "2026-10-20",
+      "time": "20:00",
+      "homeTeamId": 12,
+      "awayTeamId": 14,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B80"
+    },
+    {
+      "round": 8,
+      "date": "2026-10-20",
+      "time": "22:00",
+      "homeTeamId": 3,
+      "awayTeamId": 10,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B81"
+    },
+    {
+      "round": 8,
+      "date": "2026-10-21",
+      "time": "20:00",
+      "homeTeamId": 6,
+      "awayTeamId": 1,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B82"
+    },
+    {
+      "round": 8,
+      "date": "2026-10-21",
+      "time": "22:00",
+      "homeTeamId": 5,
+      "awayTeamId": 11,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B83"
+    },
+    {
+      "round": 8,
+      "date": "2026-10-22",
+      "time": "20:00",
+      "homeTeamId": 4,
+      "awayTeamId": 9,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B84"
+    },
+    {
+      "round": 8,
+      "date": "2026-10-22",
+      "time": "22:00",
+      "homeTeamId": 15,
+      "awayTeamId": 7,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B85"
+    },
+    {
+      "round": 9,
+      "date": "2026-10-26",
+      "time": "20:00",
+      "homeTeamId": 14,
+      "awayTeamId": 3,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B88"
+    },
+    {
+      "round": 9,
+      "date": "2026-10-26",
+      "time": "22:00",
+      "homeTeamId": 11,
+      "awayTeamId": 1,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B89"
+    },
+    {
+      "round": 9,
+      "date": "2026-10-27",
+      "time": "20:00",
+      "homeTeamId": 12,
+      "awayTeamId": 7,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B90"
+    },
+    {
+      "round": 9,
+      "date": "2026-10-27",
+      "time": "22:00",
+      "homeTeamId": 15,
+      "awayTeamId": 8,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B91"
+    },
+    {
+      "round": 9,
+      "date": "2026-10-28",
+      "time": "20:00",
+      "homeTeamId": 13,
+      "awayTeamId": 2,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B92"
+    },
+    {
+      "round": 9,
+      "date": "2026-10-28",
+      "time": "22:00",
+      "homeTeamId": 5,
+      "awayTeamId": 9,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B93"
+    },
+    {
+      "round": 9,
+      "date": "2026-10-29",
+      "time": "20:00",
+      "homeTeamId": 6,
+      "awayTeamId": 10,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B94"
+    },
+    {
+      "round": 9,
+      "date": "2026-10-29",
+      "time": "22:00",
+      "homeTeamId": 16,
+      "awayTeamId": 4,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B95"
+    },
+    {
+      "round": 10,
+      "date": "2026-11-03",
+      "time": "20:00",
+      "homeTeamId": 8,
+      "awayTeamId": 1,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B98"
+    },
+    {
+      "round": 10,
+      "date": "2026-11-03",
+      "time": "22:00",
+      "homeTeamId": 11,
+      "awayTeamId": 6,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B99"
+    },
+    {
+      "round": 10,
+      "date": "2026-11-04",
+      "time": "20:00",
+      "homeTeamId": 9,
+      "awayTeamId": 3,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B100"
+    },
+    {
+      "round": 10,
+      "date": "2026-11-04",
+      "time": "22:00",
+      "homeTeamId": 14,
+      "awayTeamId": 4,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B101"
+    },
+    {
+      "round": 11,
+      "date": "2026-11-09",
+      "time": "20:00",
+      "homeTeamId": 13,
+      "awayTeamId": 15,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B104"
+    },
+    {
+      "round": 11,
+      "date": "2026-11-09",
+      "time": "22:00",
+      "homeTeamId": 3,
+      "awayTeamId": 7,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B105"
+    },
+    {
+      "round": 11,
+      "date": "2026-11-10",
+      "time": "20:00",
+      "homeTeamId": 5,
+      "awayTeamId": 16,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B106"
+    },
+    {
+      "round": 11,
+      "date": "2026-11-10",
+      "time": "22:00",
+      "homeTeamId": 6,
+      "awayTeamId": 14,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B107"
+    },
+    {
+      "round": 11,
+      "date": "2026-11-11",
+      "time": "20:00",
+      "homeTeamId": 1,
+      "awayTeamId": 10,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B108"
+    },
+    {
+      "round": 11,
+      "date": "2026-11-11",
+      "time": "22:00",
+      "homeTeamId": 12,
+      "awayTeamId": 8,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B109"
+    },
+    {
+      "round": 11,
+      "date": "2026-11-12",
+      "time": "20:00",
+      "homeTeamId": 4,
+      "awayTeamId": 2,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B110"
+    },
+    {
+      "round": 11,
+      "date": "2026-11-12",
+      "time": "22:00",
+      "homeTeamId": 11,
+      "awayTeamId": 9,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B111"
+    },
+    {
+      "round": 12,
+      "date": "2026-11-16",
+      "time": "20:00",
+      "homeTeamId": 3,
+      "awayTeamId": 8,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B116"
+    },
+    {
+      "round": 12,
+      "date": "2026-11-16",
+      "time": "22:00",
+      "homeTeamId": 9,
+      "awayTeamId": 1,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B117"
+    },
+    {
+      "round": 12,
+      "date": "2026-11-17",
+      "time": "20:00",
+      "homeTeamId": 10,
+      "awayTeamId": 14,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B118"
+    },
+    {
+      "round": 12,
+      "date": "2026-11-17",
+      "time": "22:00",
+      "homeTeamId": 2,
+      "awayTeamId": 5,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B119"
+    },
+    {
+      "round": 12,
+      "date": "2026-11-18",
+      "time": "20:00",
+      "homeTeamId": 4,
+      "awayTeamId": 15,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B120"
+    },
+    {
+      "round": 12,
+      "date": "2026-11-18",
+      "time": "22:00",
+      "homeTeamId": 11,
+      "awayTeamId": 16,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B121"
+    },
+    {
+      "round": 12,
+      "date": "2026-11-19",
+      "time": "20:00",
+      "homeTeamId": 7,
+      "awayTeamId": 6,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B122"
+    },
+    {
+      "round": 12,
+      "date": "2026-11-19",
+      "time": "22:00",
+      "homeTeamId": 12,
+      "awayTeamId": 13,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B123"
+    },
+    {
+      "round": 13,
+      "date": "2026-11-23",
+      "time": "20:00",
+      "homeTeamId": 4,
+      "awayTeamId": 12,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B126"
+    },
+    {
+      "round": 13,
+      "date": "2026-11-23",
+      "time": "22:00",
+      "homeTeamId": 9,
+      "awayTeamId": 16,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B127"
+    },
+    {
+      "round": 13,
+      "date": "2026-11-24",
+      "time": "20:00",
+      "homeTeamId": 3,
+      "awayTeamId": 13,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B128"
+    },
+    {
+      "round": 13,
+      "date": "2026-11-24",
+      "time": "22:00",
+      "homeTeamId": 11,
+      "awayTeamId": 2,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B129"
+    },
+    {
+      "round": 13,
+      "date": "2026-11-25",
+      "time": "20:00",
+      "homeTeamId": 1,
+      "awayTeamId": 14,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B130"
+    },
+    {
+      "round": 13,
+      "date": "2026-11-25",
+      "time": "22:00",
+      "homeTeamId": 10,
+      "awayTeamId": 7,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B131"
+    },
+    {
+      "round": 13,
+      "date": "2026-11-26",
+      "time": "20:00",
+      "homeTeamId": 5,
+      "awayTeamId": 15,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B132"
+    },
+    {
+      "round": 13,
+      "date": "2026-11-26",
+      "time": "22:00",
+      "homeTeamId": 6,
+      "awayTeamId": 8,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B133"
+    },
+    {
+      "round": 14,
+      "date": "2026-11-30",
+      "time": "20:00",
+      "homeTeamId": 6,
+      "awayTeamId": 13,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B136"
+    },
+    {
+      "round": 14,
+      "date": "2026-11-30",
+      "time": "22:00",
+      "homeTeamId": 16,
+      "awayTeamId": 1,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B137"
+    },
+    {
+      "round": 14,
+      "date": "2026-12-01",
+      "time": "20:00",
+      "homeTeamId": 10,
+      "awayTeamId": 8,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B138"
+    },
+    {
+      "round": 14,
+      "date": "2026-12-01",
+      "time": "22:00",
+      "homeTeamId": 14,
+      "awayTeamId": 7,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B139"
+    },
+    {
+      "round": 14,
+      "date": "2026-12-02",
+      "time": "20:00",
+      "homeTeamId": 9,
+      "awayTeamId": 2,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B140"
+    },
+    {
+      "round": 14,
+      "date": "2026-12-02",
+      "time": "22:00",
+      "homeTeamId": 3,
+      "awayTeamId": 4,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B141"
+    },
+    {
+      "round": 14,
+      "date": "2026-12-03",
+      "time": "20:00",
+      "homeTeamId": 5,
+      "awayTeamId": 12,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B142"
+    },
+    {
+      "round": 14,
+      "date": "2026-12-03",
+      "time": "22:00",
+      "homeTeamId": 15,
+      "awayTeamId": 11,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B143"
+    },
+    {
+      "round": 15,
+      "date": "2026-12-07",
+      "time": "20:00",
+      "homeTeamId": 1,
+      "awayTeamId": 7,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B146"
+    },
+    {
+      "round": 15,
+      "date": "2026-12-07",
+      "time": "22:00",
+      "homeTeamId": 10,
+      "awayTeamId": 13,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B147"
+    },
+    {
+      "round": 15,
+      "date": "2026-12-08",
+      "time": "20:00",
+      "homeTeamId": 14,
+      "awayTeamId": 8,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B148"
+    },
+    {
+      "round": 15,
+      "date": "2026-12-08",
+      "time": "22:00",
+      "homeTeamId": 16,
+      "awayTeamId": 2,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B149"
+    },
+    {
+      "round": 15,
+      "date": "2026-12-09",
+      "time": "20:00",
+      "homeTeamId": 6,
+      "awayTeamId": 4,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B150"
+    },
+    {
+      "round": 15,
+      "date": "2026-12-09",
+      "time": "22:00",
+      "homeTeamId": 9,
+      "awayTeamId": 15,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B151"
+    },
+    {
+      "round": 15,
+      "date": "2026-12-10",
+      "time": "20:00",
+      "homeTeamId": 5,
+      "awayTeamId": 3,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B152"
+    },
+    {
+      "round": 15,
+      "date": "2026-12-10",
+      "time": "22:00",
+      "homeTeamId": 11,
+      "awayTeamId": 12,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B153"
+    },
+    {
+      "round": 16,
+      "date": "2026-12-14",
+      "time": "20:00",
+      "homeTeamId": 10,
+      "awayTeamId": 4,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B156"
+    },
+    {
+      "round": 16,
+      "date": "2026-12-14",
+      "time": "22:00",
+      "homeTeamId": 6,
+      "awayTeamId": 5,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B157"
+    },
+    {
+      "round": 16,
+      "date": "2026-12-15",
+      "time": "20:00",
+      "homeTeamId": 7,
+      "awayTeamId": 8,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B158"
+    },
+    {
+      "round": 16,
+      "date": "2026-12-15",
+      "time": "22:00",
+      "homeTeamId": 14,
+      "awayTeamId": 13,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B159"
+    },
+    {
+      "round": 16,
+      "date": "2026-12-16",
+      "time": "20:00",
+      "homeTeamId": 16,
+      "awayTeamId": 15,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B160"
+    },
+    {
+      "round": 16,
+      "date": "2026-12-16",
+      "time": "22:00",
+      "homeTeamId": 2,
+      "awayTeamId": 1,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B161"
+    },
+    {
+      "round": 16,
+      "date": "2026-12-17",
+      "time": "20:00",
+      "homeTeamId": 9,
+      "awayTeamId": 12,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B162"
+    },
+    {
+      "round": 16,
+      "date": "2026-12-17",
+      "time": "22:00",
+      "homeTeamId": 11,
+      "awayTeamId": 3,
+      "notes": "",
+      "status": "scheduled",
+      "sourceCell": "Primera Vuelta!B163"
+    }
+  ]
+}

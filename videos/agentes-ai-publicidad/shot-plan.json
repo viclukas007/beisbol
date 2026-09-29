@@ -1,0 +1,64 @@
+{
+  "status": "final",
+  "category": "kinetic-type",
+  "duration_s": 8,
+  "fps": 30,
+  "canvas": { "w": 1920, "h": 320, "aspect": "6:1" },
+  "style": "Agentes AI night-blue banner. Restrained typography, stable white supplied logo, fixed indigo CTA, static dark background. Headline alone changes with a short masked vertical slide and fade. Maintain readability when shown at half resolution.",
+  "palette": ["#05070f", "#4f63ff", "#22d3ee", "#22c55e", "#ffffff"],
+  "font": "Plus Jakarta Sans",
+  "font_file": "assets/fonts/plus-jakarta-sans.ttf",
+  "beats": [3.6, 7.2],
+  "export": "mp4",
+  "export_settings": { "codec": "h264", "pixel_format": "yuv420p", "audio": false, "frames": 240 },
+  "asset_needs": [{ "role": "brand", "kind": "logo", "source": "assets/logo-white.png", "treatment": "none" }],
+  "assets": ["assets/logo-white.png", "assets/fonts/plus-jakarta-sans.ttf", "assets/gsap.min.js"],
+  "shot_brief": "Sobre azul noche, el logo Agentes AI y la invitación Solicitar demo quedan siempre visibles. La frase Responde a tus clientes se releva suavemente por Organiza tu seguimiento, manteniendo una línea secundaria que identifica WhatsApp, redes y CRM. El primer mensaje vuelve antes del final para repetir el video sin salto. Solo se anima el intercambio tipográfico; sin sonido, destellos o pulsaciones.",
+  "block": "line-swap",
+  "registry_type": "component",
+  "catalog_evidence": { "query": "calm caption text fade slide reveal", "tier": "words", "selected": "line-swap", "description": "A masked full-line beat replacement: line A holds center then exits up through an overflow-hidden mask as line B enters bottom-up on the same beat, with an optional accent underline drawing beneath one word of line B." },
+  "customize": {
+    "reuse": "Install line-swap and reuse its masked sibling-line markup and timeline mechanism. Adapt typography, positions, envelope and displacement; do not animate the supplied logo, CTA or background.",
+    "line_a": "Responde a tus clientes",
+    "line_b": "Organiza tu seguimiento",
+    "swap_duration_s": 0.4,
+    "swap_ease": "power2.inOut",
+    "vertical_distance_desktop_px": 14,
+    "vertical_distance_mobile_px": 8,
+    "optional_underline": false,
+    "loop": "A fully visible at t=0. A→B from 3.6 to 4.0. B holds through 7.2. B→A from 7.2 to 7.6. A holds through 8.0. Restore exact x/y/opacity values for identical first and last appearance.",
+    "rules": ["masked sibling line exchange", "explicit absolute opacity/transform states on a single paused timeline", "stationary brand and CTA anchors"]
+  },
+  "layouts": {
+    "desktop": {
+      "canvas": { "w": 1920, "h": 320 },
+      "safe_margin_px": 48,
+      "logo": { "x": 64, "y": 72, "w": 366, "h": 136, "fit": "contain" },
+      "headline": { "x": 500, "y": 92, "w": 890, "h": 88, "font_px": 64, "weight": 800, "align": "left", "line_height": 1.1 },
+      "support": { "x": 500, "y": 190, "w": 890, "h": 44, "font_px": 32, "weight": 600, "color": "#22d3ee" },
+      "cta": { "x": 1480, "y": 116, "w": 360, "h": 88, "font_px": 36, "weight": 700, "radius_px": 18, "background": "#4f63ff", "color": "#ffffff" }
+    },
+    "mobile": {
+      "canvas": { "w": 768, "h": 256, "aspect": "3:1" },
+      "safe_margin_px": 24,
+      "logo": { "x": 28, "y": 75, "w": 218, "h": 82, "fit": "contain" },
+      "headline": { "x": 282, "y": 24, "w": 458, "h": 112, "font_px": 42, "weight": 800, "align": "left", "line_height": 1.12, "line_a": "Responde a tus\nclientes", "line_b": "Organiza tu\nseguimiento" },
+      "support": { "x": 282, "y": 145, "w": 458, "h": 34, "font_px": 25, "weight": 600, "color": "#22d3ee" },
+      "cta": { "x": 282, "y": 190, "w": 246, "h": 44, "font_px": 24, "weight": 700, "radius_px": 11, "background": "#4f63ff", "color": "#ffffff" }
+    }
+  },
+  "content": {
+    "block": "line-swap",
+    "logo": "assets/logo-white.png",
+    "support": "WhatsApp · Redes · CRM",
+    "cta": "Solicitar demo",
+    "scenes": [
+      { "id": "hook", "start": 0, "end": 3.6, "text": "Responde a tus clientes", "emphasis_words": ["clientes"], "emotion": "calm", "motion": "hold initial line", "beats": [] },
+      { "id": "build", "start": 3.6, "end": 7.2, "text": "Organiza tu seguimiento", "emphasis_words": ["seguimiento"], "emotion": "calm", "motion": "masked soft line swap during first 0.4s, then hold", "beats": [3.6] },
+      { "id": "resolve", "start": 7.2, "end": 8, "text": "Responde a tus clientes", "emphasis_words": ["clientes"], "emotion": "calm", "motion": "reverse masked swap during first 0.4s, then exact initial-state hold", "beats": [7.2] }
+    ]
+  },
+  "review_times_s": [0, 0.5, 3.5, 3.8, 4.2, 6, 7.4, 7.8],
+  "deliverables": ["renders/banner-desktop.mp4", "renders/banner-mobile.mp4"],
+  "source_notes": "Copy summarizes actual local index.html hero lead and CTA. No numerical performance claims, prices or invented results. Mobile is a dedicated layout rather than desktop crop."
+}

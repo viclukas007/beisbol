@@ -1,0 +1,15 @@
+node_modules
+dist
+.git
+.env
+*.xlsx
+*.py
+workbook-source.json
+plan.MD
+README.md
+data/import-report.json
+screenshots
+preview.mjs
+videos
+data/schedule-source.json
+.env.*

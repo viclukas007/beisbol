@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+screenshots/
+preview.mjs
+*.xlsx
+.env.*
+!.env.example
+workbook-source.json
+data/schedule-source.json
+videos/**/renders/
+videos/**/snapshots/

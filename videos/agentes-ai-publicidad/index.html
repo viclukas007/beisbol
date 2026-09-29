@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920, height=320">
+  <title>Agentes AI — publicidad escritorio</title>
+  <script src="assets/gsap.min.js"></script>
+  <style>
+    @font-face { font-family: 'Plus Jakarta Sans'; src: url('assets/fonts/plus-jakarta-sans.ttf') format('truetype'); font-weight: 200 800; font-style: normal; font-display: block; }
+    :root { --bg: #05070f; --accent: #4f63ff; --support: #22d3ee; --green: #22c55e; --ink: #ffffff; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1920px; height: 320px; overflow: hidden; background: var(--bg); }
+    #stage { position: relative; width: 100%; height: 100%; background: var(--bg); color: var(--ink); font-family: 'Plus Jakarta Sans', sans-serif; }
+    .banner-layout { width: 100%; height: 100%; display: grid; grid-template-columns: 366px minmax(0, 1fr) 360px; align-items: center; gap: 70px; padding: 48px 80px 48px 64px; }
+    .brand { display: block; width: 366px; height: 136px; object-fit: contain; }
+    .message { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+    /* Adapted from the installed line-swap registry component. */
+    .ls-mask { position: relative; width: 100%; height: 88px; overflow: hidden; }
+    .ls-line { position: absolute; inset: 0; display: flex; align-items: center; font-size: 64px; font-weight: 800; line-height: 1.1; letter-spacing: -0.035em; white-space: nowrap; will-change: transform, opacity; }
+    .ls-line-inner { display: block; width: 100%; }
+    .ls-line-b { opacity: 0; }
+    .support { color: var(--support); height: 44px; font-size: 32px; font-weight: 600; line-height: 44px; }
+    .cta { display: flex; align-items: center; justify-content: center; width: 360px; height: 88px; background: var(--accent); color: var(--ink); border-radius: 18px; font-size: 36px; font-weight: 700; line-height: 1.1; }
+  </style>
+</head>
+<body>
+  <div id="stage" data-composition-id="agentes-ai-desktop" data-start="0" data-duration="8" data-fps="30" data-width="1920" data-height="320">
+    <div id="agentes-ai-desktop-banner" class="banner-layout clip" data-start="0" data-duration="8" data-track-index="0">
+      <img id="agentes-ai-desktop-logo" class="brand" src="assets/logo-white.png" alt="Agentes AI by Cuatro Monos">
+      <div class="message">
+        <div class="ls-mask" aria-label="Responde a tus clientes. Organiza tu seguimiento.">
+          <div id="agentes-ai-desktop-line-a" class="ls-line ls-line-a"><span class="ls-line-inner">Responde a tus clientes</span></div>
+          <div id="agentes-ai-desktop-line-b" class="ls-line ls-line-b"><span class="ls-line-inner">Organiza tu seguimiento</span></div>
+        </div>
+        <div class="support">WhatsApp · Redes · CRM</div>
+      </div>
+      <div class="cta">Solicitar demo</div>
+    </div>
+  </div>
+  <script>
+    // Registry line-swap mechanism: masked sibling lines, explicit states.
+    // Short travel, simultaneous fades and stationary brand / CTA anchors.
+    const tl = gsap.timeline({ paused: true });
+    tl.set('#agentes-ai-desktop-line-a', { x: 0, y: 0, opacity: 1 }, 0);
+    tl.set('#agentes-ai-desktop-line-b', { x: 0, y: 14, opacity: 0 }, 0);
+    tl.fromTo('#agentes-ai-desktop-line-a', { y: 0, opacity: 1 }, { y: -14, opacity: 0, duration: 0.4, ease: 'power2.inOut', immediateRender: false }, 3.6);
+    tl.fromTo('#agentes-ai-desktop-line-b', { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.inOut', immediateRender: false }, 3.6);
+    tl.fromTo('#agentes-ai-desktop-line-b', { y: 0, opacity: 1 }, { y: -14, opacity: 0, duration: 0.4, ease: 'power2.inOut', immediateRender: false }, 7.2);
+    tl.fromTo('#agentes-ai-desktop-line-a', { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.inOut', immediateRender: false }, 7.2);
+    tl.set('#agentes-ai-desktop-line-b', { x: 0, y: 14, opacity: 0 }, 7.6);
+    tl.set('#agentes-ai-desktop-line-a', { x: 0, y: 0, opacity: 1 }, 8);
+    window.__timelines = window.__timelines || {};
+    window.__timelines['agentes-ai-desktop'] = tl;
+    tl.seek(0);
+  </script>
+</body>
+</html>

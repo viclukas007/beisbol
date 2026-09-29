@@ -1,0 +1,23 @@
+{
+  "teams": 16,
+  "rosterSlots": 352,
+  "namedPlayers": 337,
+  "placeholderSlots": 15,
+  "roundRows": 10560,
+  "roundsWithActivity": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "masterDifferences": [
+    {
+      "player": "ALEJANDRO MILLET",
+      "team": "Bucaneros",
+      "kind": "master_vs_team"
+    }
+  ],
+  "minimumAb": 4.011363636363637,
+  "minimumIp": 4,
+  "eraInnings": 7
+}

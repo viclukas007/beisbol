@@ -1,0 +1,7 @@
+export type Stats = Record<'jj'|'ab'|'hits'|'singles'|'doubles'|'triples'|'hr'|'rbi'|'avg'|'ip'|'er'|'bb'|'k'|'era'|'w'|'l', number>;
+export type Team = { id: number; name: string; color: string };
+export type Player = { id: number; name: string; originalName: string; teamId: number; placeholder: boolean; sourceCell: string; stats: Stats; version: number; rosterVersion:number; active:boolean; member:boolean|null };
+export type Round = { playerId: number; round: number; stats: Stats; sourceCell: string; version: number };
+export type Game = {id:number;turn:1;round:number;date:string;time:string;homeTeamId:number;awayTeamId:number;homeScore:number|null;awayScore:number|null;notes:string;status:'scheduled'|'postponed'|'completed'|'cancelled';sourceCell:string|null;deletedAt:string|null;updatedAt:string;version:number};
+export type Change = {id:string;entity:string;entityId:string;operation:string;before:unknown;after:unknown;responsible:string;createdAt:string};
+export type Snapshot = { source: string; updatedAt: string; metadata: { namedPlayers: number; placeholderSlots: number; rosterSlots: number; roundRows: number; roundsWithActivity: number[]; minimumAb: number; minimumIp: number; eraInnings: number; masterDifferences: unknown[] }; teams: Team[]; players: Player[]; rounds: Round[]; games:Game[]; schedule:{source:string;season:string;sheet:string;gameCount:number;notes:string[];secondTurnConfirmed:false} };
