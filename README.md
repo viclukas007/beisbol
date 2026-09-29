@@ -21,6 +21,33 @@ Si se clona el proyecto en otra computadora, copiar `.env.example` a `.env` y de
 
 ## Detener
 
+## Despliegue en EasyPanel con PostgreSQL existente
+
+1. En el mismo proyecto que PostgreSQL, crear un servicio **App**.
+2. En **Source → GitHub**, usar `viclukas007/beisbol`, rama `main` y Build Path `/`.
+3. En **Build**, elegir **Dockerfile**, ruta `Dockerfile`.
+4. En PostgreSQL → **Credentials**, copiar la **URL interna** de conexión.
+5. En **Environment** de la app, configurar:
+
+```dotenv
+DATABASE_URL=URL_INTERNA_COPIADA_DE_POSTGRESQL
+ADMIN_EMAIL=victor@cuatromonos.mx
+ADMIN_PASSWORD_HASH=HASH_SCRYPT_DE_LA_INSTALACION_LOCAL_O_GENERADO_CON_create_admin_hash.py
+PORT=3080
+SECURE_COOKIE=true
+```
+
+6. Configurar un dominio con HTTPS y puerto de destino **3080**. `SECURE_COOKIE=true` corresponde al acceso por HTTPS.
+7. Desplegar la app. En el primer arranque crea las tablas, importa los datos y crea la cuenta inicial. Entrar en `https://TU_DOMINIO/admin`.
+
+El valor local de `ADMIN_PASSWORD_HASH` está en `.env`; copiar únicamente esa configuración permite usar la contraseña inicial indicada para esta instalación. Si se genera otra huella, entrar con la contraseña utilizada al generarla. Los cambios posteriores de contraseña se conservan en la base.
+
+Los MP4 se incluyen dentro de la imagen en `/app/public/ads`, por lo que el banner funciona al desplegar este servicio App. Las estadísticas y sesiones quedan en PostgreSQL. Las credenciales se configuran en EasyPanel y permanecen fuera del repositorio.
+
+Referencias: [Servicio App](https://easypanel.io/docs/services/app) y [Servicio PostgreSQL](https://easypanel.io/docs/services/postgres).
+
+## Detener la instalación local
+
 ```powershell
 docker compose stop
 ```

@@ -13,6 +13,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 COPY --from=build /app/dist ./dist
+COPY public/ads ./public/ads
 COPY server ./server
 COPY data/seed.json ./data/seed.json
 COPY data/schedule.json ./data/schedule.json

@@ -138,3 +138,11 @@ Siguiente mejora pendiente de definir: carga de Excel actualizado desde el naveg
 
 Publicación del proyecto en https://github.com/viclukas007/beisbol, rama main. Se incluyen código, semillas normalizadas, MP4 y composiciones HyperFrames; .env, archivos de sesión y Excel originales quedan excluidos del repositorio.
 
+## Adaptación para EasyPanel
+
+El usuario creó un servicio PostgreSQL en EasyPanel. El despliegue usa un servicio App del mismo proyecto, construido con el Dockerfile del repositorio; DATABASE_URL toma la URL interna del servicio PostgreSQL. ADMIN_EMAIL y ADMIN_PASSWORD_HASH crean la cuenta inicial y PORT=3080 configura el destino del dominio. SECURE_COOKIE=true se usa con HTTPS.
+
+- [x] Incluir public/ads en la imagen final para servir los videos sin depender del montaje local.
+- [x] Documentar pasos y variables de EasyPanel en README.md.
+- [ ] Configurar y desplegar los servicios en el panel del usuario; todavía no se tiene acceso al panel ni su configuración.
+
