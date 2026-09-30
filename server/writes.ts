@@ -2,7 +2,7 @@ import type { Express } from 'express';
 import type { Pool, PoolClient } from 'pg';
 import type { Stats } from '../src/types.ts';
 
-const counts = ['jj','ab','hits','singles','doubles','triples','hr','rbi','ip','er','bb','k','w','l'] as const;
+export const counts = ['jj','ab','hits','singles','doubles','triples','hr','rbi','ip','er','bb','k','w','l'] as const;
 const batting = ['ab','hits','singles','doubles','triples','hr'] as const;
 export class InputError extends Error {
   status: number;
@@ -16,10 +16,10 @@ function version(value: unknown, current: number) {
   integer(value, 'Versión');
   if (value !== current) throw new InputError('Este registro cambió en otra ventana. Carga la versión actual antes de guardar.', 409);
 }
-function rates(stats: Stats): Stats {
+export function rates(stats: Stats): Stats {
   return { ...stats, avg: stats.ab ? stats.hits / stats.ab : 0, era: stats.ip ? stats.er * 7 / stats.ip : 0 };
 }
-function validateStats(value: unknown, previous: Stats): Stats {
+export function validateStats(value: unknown, previous: Stats): Stats {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new InputError('Faltan las estadísticas.');
   const stats = { ...previous };
   for (const key of counts) {
@@ -34,8 +34,8 @@ function validateStats(value: unknown, previous: Stats): Stats {
   }
   return rates(stats);
 }
-function same(a: Stats, b: Stats) { return counts.every(key => a[key] === b[key]); }
-async function audit(c: PoolClient, entity: string, id: string, operation: string, before: unknown, after: unknown, responsible: string) {
+export function same(a: Stats, b: Stats) { return counts.every(key => a[key] === b[key]); }
+export async function audit(c: PoolClient, entity: string, id: string, operation: string, before: unknown, after: unknown, responsible: string) {
   await c.query('INSERT INTO audit_log(entity,entity_id,operation,before_data,after_data,responsible) VALUES($1,$2,$3,$4,$5,$6)', [entity,id,operation,before,after,responsible]);
 }
 function actor(body: any) {
@@ -43,7 +43,7 @@ function actor(body: any) {
   if (typeof value !== 'string' || !value.trim() || value.length > 100) throw new InputError('Indica un responsable de hasta 100 caracteres.');
   return value.trim();
 }
-async function transaction<T>(pool: Pool, action: (c: PoolClient) => Promise<T>) {
+export async function transaction<T>(pool: Pool, action: (c: PoolClient) => Promise<T>) {
   const c = await pool.connect();
   try { await c.query('BEGIN'); const result = await action(c); await c.query('COMMIT'); return result; }
   catch (error) { await c.query('ROLLBACK'); throw error; }
@@ -83,6 +83,7 @@ export function registerWrites(app: Express, pool: Pool) {
   app.post('/api/players',async (req,res)=>{
     const responsible=actor(req.body);
     const result=await transaction(pool,async c=>{
+      await c.query('SELECT pg_advisory_xact_lock(827419)');
       const values=await rosterValue(c,req.body);
       const saved=(await c.query(`INSERT INTO players(name,team_id,member,original_name,placeholder,source_cell) VALUES($1,$2,$3,$1,false,'Captura manual') RETURNING ${rosterColumns}`,values)).rows[0];
       const stats=Object.fromEntries([...counts,'avg','era'].map(k=>[k,0]));
@@ -181,6 +182,7 @@ export function registerWrites(app: Express, pool: Pool) {
       if (old.deletedAt) throw new InputError('Restaura el juego antes de editarlo.',409);
       version(req.body?.version,old.version);
       const values = await gameValue(c,req.body);
+      if((old.homeTeamId!==req.body.homeTeamId||old.awayTeamId!==req.body.awayTeamId||req.body.status!=='completed')&&(await c.query('SELECT 1 FROM game_player_hits WHERE game_id=$1 AND deleted_at IS NULL LIMIT 1',[id])).rowCount)throw new InputError('Retira las capturas de hits antes de cambiar los equipos o reabrir el juego.',409);
       const next = (await c.query(`UPDATE games SET round=$1,date=$2,time=$3,home_team_id=$4,away_team_id=$5,notes=$6,status=$7,home_score=$8,away_score=$9,version=version+1 WHERE id=$10 RETURNING ${gameColumns}`,[...values,id])).rows[0];
       await audit(c,'game',String(id),'update',old,next,responsible);
       return next;

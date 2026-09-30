@@ -122,7 +122,7 @@ El uso actual es local en localhost. El administrador ya inicia sesión y puede 
 
 Estado de despliegue: compilación TypeScript/Vite completada y contenedores saludables. La API devolvió 120 juegos de Primera Vuelta y 352 registros iniciales de plantilla. Se revisaron las pantallas de calendario, captura y plantillas; no se realizaron pruebas de escritura sobre las estadísticas reales.
 
-Siguiente mejora pendiente de definir: carga de Excel actualizado desde el navegador. La captura manual ya está disponible. No se ha confirmado ni importado Segunda Vuelta.
+La carga de Excel actualizado desde el navegador se incorpora en la Fase 3. No se ha confirmado ni importado Segunda Vuelta.
 
 ## Inicio de sesión y marcadores
 
@@ -145,4 +145,35 @@ El usuario creó un servicio PostgreSQL en EasyPanel. El despliegue usa un servi
 - [x] Incluir public/ads en la imagen final para servir los videos sin depender del montaje local.
 - [x] Documentar pasos y variables de EasyPanel en README.md.
 - [ ] Configurar y desplegar los servicios en el panel del usuario; todavía no se tiene acceso al panel ni su configuración.
+
+## Fase 3: reglas, listas e importación masiva
+
+Solicitud del 30 de septiembre de 2026:
+
+1. Explicar fórmula de AVG, denominador y mínimo de clasificación, con procedencia del Excel.
+2. Explicar fórmula de ERA, entradas de referencia y mínimo IP; mantener el cálculo de sóftbol sobre 7 entradas.
+3. Registrar hits por jugador y partido, según la confirmación del usuario.
+4. Aplicar los criterios de desempate del reglamento de la liga. Mientras no se confirmen, conservar las posiciones empatadas y mostrar ese estado.
+5. Tabla de posiciones en pantalla, confirmada por el usuario.
+6. Imagen oficial de la liga: recibir el archivo o permitir cargarlo desde la administración.
+7. Generar listas por equipo con jugadores activos, condición de socio y espacio de validación de la liga; descargar e imprimir.
+8. Carga masiva de jugadores en CSV/XLSX con plantillas, vista previa, validación, control de versiones y aplicación transaccional.
+9. Carga masiva de estadísticas por jornada o acumulado, y lectura del formato original de hojas por equipo. Guardar por diferencia para no duplicar estadísticas. Validar y mostrar errores antes de aplicar.
+
+Las importaciones no darán de baja jugadores ni borrarán estadísticas por omisión de filas. Se usarán IDs estables para actualizar registros existentes; sin ID, se identificarán jugadores por equipo y nombre y se rechazarán las coincidencias ambiguas. No se deducirán datos de socio ni marcadores de campos inexistentes.
+
+### Estado de la Fase 3
+
+- [x] Explicación visible de AVG y ERA, con celdas de origen y cálculo de los mínimos.
+- [x] Captura de hits por jugador y partido; consulta en el rol y en la ficha individual, con historial y versiones.
+- [x] Tabla de posiciones derivada de marcadores finalizados; actualiza al editar, retirar o restaurar juegos.
+- [x] Configuración de orden y criterios de desempate; sin orden oficial mientras no se confirme el reglamento.
+- [ ] Aplicar el reglamento oficial que el usuario enviará; todavía no se recibió.
+- [x] Espacio para cargar la imagen de la liga desde administración; almacenamiento en PostgreSQL.
+- [x] Listas por equipo para imprimir/guardar PDF y descargar CSV, preparadas para firma y validación.
+- [x] Carga masiva de jugadores CSV/XLSX, plantillas, vista previa y validación.
+- [x] Carga masiva de estadísticas acumuladas o jornadas, lectura del formato original y actualización por diferencia.
+- [x] Compilación TypeScript/Vite y actualización del Docker local. Ambos contenedores saludables; 352 jugadores y 120 juegos conservados. No se modificaron estadísticas ni marcadores reales para hacer pruebas.
+
+El usuario solicitó dejar el espacio preparado para la imagen y enviará los desempates. Los hits por partido se registran como detalle complementario: no se suman automáticamente a los resúmenes del Excel para evitar duplicarlos sin datos completos de bateo.
 

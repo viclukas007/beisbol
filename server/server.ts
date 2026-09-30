@@ -5,6 +5,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { registerWrites, gameColumns, InputError } from './writes.ts';
 import {registerAuth,initializeAdmin} from './auth.ts';
+import {registerImports} from './imports.ts';
+import {registerLeague} from './league.ts';
+import {registerGameHits} from './game-hits.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL, max: 8 });
@@ -42,6 +45,7 @@ async function initialize() {
 
 const app = express();
 app.disable('x-powered-by');
+app.use(['/api/admin/imports/preview','/api/admin/league/logo'],express.json({limit:'16mb'}));
 app.use(express.json({limit:'128kb'}));
 app.use('/api', (req,res,next) => {
   if (['POST','PUT','PATCH','DELETE'].includes(req.method) && req.headers.origin) {
@@ -55,6 +59,9 @@ app.use('/api', (req,res,next) => {
 });
 registerAuth(app,pool);
 registerWrites(app,pool);
+registerImports(app,pool);
+registerLeague(app,pool);
+registerGameHits(app,pool);
 app.get('/api/health', async (_req, res) => {
   try { await pool.query('SELECT 1'); res.json({ status: 'ok', database: 'postgresql' }); }
   catch { res.status(503).json({ status: 'unavailable' }); }
@@ -77,6 +84,8 @@ app.get(['/api/snapshot','/api/admin/snapshot'], async (req, res) => {
     const rounds = await client.query(`SELECT player_id AS "playerId",round,stats,source_cell AS "sourceCell",version FROM round_stats ORDER BY player_id,round`);
     const schedule = await client.query('SELECT filename,metadata FROM schedule_imports WHERE id=1');
     const games = await client.query(`SELECT ${gameColumns} FROM games ORDER BY date,time,id`);
+    const gameHits = (await client.query(`SELECT h.game_id AS "gameId",h.player_id AS "playerId",p.name,h.team_id AS "teamId",h.hits,h.version,h.deleted_at AS "deletedAt" FROM game_player_hits h JOIN players p ON p.id=h.player_id ORDER BY h.game_id,h.player_id`)).rows;
+    const league = (await client.query(`SELECT name,logo_version AS version,logo IS NOT NULL AS "hasLogo",standings_criteria AS criteria,rules_confirmed AS "rulesConfirmed",rules_notes AS "rulesNotes" FROM league_settings WHERE id=1`)).rows[0];
     await client.query('COMMIT');
     res.set('Cache-Control', 'no-store');
     const activePlayers=players.rows.filter(p=>p.active);
@@ -84,7 +93,11 @@ app.get(['/api/snapshot','/api/admin/snapshot'], async (req, res) => {
     const isAdmin=req.path==='/api/admin/snapshot';
     const roster=isAdmin?players.rows:activePlayers.map(p=>({...p,member:null}));
     const ids=new Set(roster.map(p=>p.id));
-    res.json({ source: source.rows[0].filename, metadata, teams: teams.rows, players:roster, rounds:isAdmin?rounds.rows:rounds.rows.filter(r=>ids.has(r.playerId)), schedule:{source:schedule.rows[0].filename,...schedule.rows[0].metadata},games:isAdmin?games.rows:games.rows.filter(g=>!g.deletedAt), updatedAt: new Date().toISOString() });
+    metadata.minimumAb=activePlayers.reduce((sum,p)=>sum+p.stats.ab,0)/Math.max(activePlayers.length,1);
+    const visibleGames=isAdmin?games.rows:games.rows.filter(g=>!g.deletedAt);
+    const gameIds=new Set(visibleGames.map(g=>g.id));
+    const hitTotals=new Map<string,number>();for(const h of gameHits.filter(h=>!h.deletedAt)){const key=`${h.gameId}:${h.teamId}`;hitTotals.set(key,(hitTotals.get(key)??0)+h.hits);}
+    res.json({ source: source.rows[0].filename, metadata, league:{...league,logoUrl:league.hasLogo?`/api/league/logo?v=${league.version}`:null}, teams: teams.rows, players:roster, rounds:isAdmin?rounds.rows:rounds.rows.filter(r=>ids.has(r.playerId)), schedule:{source:schedule.rows[0].filename,...schedule.rows[0].metadata},games:visibleGames.map(g=>({...g,homeHits:hitTotals.get(`${g.id}:${g.homeTeamId}`)??null,awayHits:hitTotals.get(`${g.id}:${g.awayTeamId}`)??null})),gameHits:isAdmin?gameHits:gameHits.filter(h=>!h.deletedAt&&gameIds.has(h.gameId)), updatedAt: new Date().toISOString() });
   } catch (error) {
     await client.query('ROLLBACK');
     console.error('Snapshot:', error);

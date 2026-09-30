@@ -109,3 +109,30 @@ CREATE INDEX IF NOT EXISTS admin_sessions_expiry_idx ON admin_sessions(expires_a
 CREATE TABLE IF NOT EXISTS login_limits (
   key text PRIMARY KEY, attempts integer NOT NULL, expires_at timestamptz NOT NULL
 );
+CREATE TABLE IF NOT EXISTS import_batches (
+  id uuid PRIMARY KEY, user_id integer NOT NULL REFERENCES admin_users(id),
+  kind text NOT NULL CHECK(kind IN ('players','stats')), filename text NOT NULL,
+  sha256 text NOT NULL, payload jsonb NOT NULL, row_count integer NOT NULL,
+  status text NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','applied')),
+  result jsonb, created_at timestamptz NOT NULL DEFAULT now(),
+  expires_at timestamptz NOT NULL DEFAULT now()+interval '1 hour', applied_at timestamptz
+);
+CREATE TABLE IF NOT EXISTS league_settings (
+  id integer PRIMARY KEY CHECK(id=1), name text NOT NULL,
+  logo bytea, logo_type text, logo_version integer NOT NULL DEFAULT 1,
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+INSERT INTO league_settings(id,name) VALUES(1,'Liga de Sóftbol Nocturna Varonil') ON CONFLICT(id) DO NOTHING;
+ALTER TABLE league_settings ADD COLUMN IF NOT EXISTS standings_criteria jsonb NOT NULL DEFAULT '[]';
+ALTER TABLE league_settings ADD COLUMN IF NOT EXISTS rules_confirmed boolean NOT NULL DEFAULT false;
+ALTER TABLE league_settings ADD COLUMN IF NOT EXISTS rules_notes text NOT NULL DEFAULT '';
+CREATE TABLE IF NOT EXISTS game_player_hits (
+  game_id integer NOT NULL REFERENCES games(id), player_id integer NOT NULL REFERENCES players(id),
+  team_id integer NOT NULL REFERENCES teams(id), hits integer NOT NULL CHECK(hits BETWEEN 0 AND 9999),
+  version integer NOT NULL DEFAULT 1, deleted_at timestamptz, updated_at timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY(game_id,player_id)
+);
+DROP TRIGGER IF EXISTS game_hits_notify ON game_player_hits;
+CREATE TRIGGER game_hits_notify AFTER INSERT OR UPDATE OR DELETE ON game_player_hits FOR EACH STATEMENT EXECUTE FUNCTION notify_stats_changed();
+DROP TRIGGER IF EXISTS league_notify ON league_settings;
+CREATE TRIGGER league_notify AFTER UPDATE ON league_settings FOR EACH STATEMENT EXECUTE FUNCTION notify_stats_changed();
