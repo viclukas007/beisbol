@@ -177,3 +177,9 @@ Las importaciones no darán de baja jugadores ni borrarán estadísticas por omi
 
 El usuario solicitó dejar el espacio preparado para la imagen y enviará los desempates. Los hits por partido se registran como detalle complementario: no se suman automáticamente a los resúmenes del Excel para evitar duplicarlos sin datos completos de bateo.
 
+## Captura en tabla de jugadores
+
+Reemplazar el desplegable individual de Captura de estadísticas por una tabla de todos los jugadores activos, con filtros por equipo y nombre, paginación y columnas de bateo/pitcheo. Permitir editar las cifras en cada fila y guardar o descartar por jugador. Conservar borradores al filtrar o cambiar de página, advertir antes de cambiar de jornada y proteger las versiones ante actualizaciones en tiempo real. AVG y ERA se calculan en la tabla; las jornadas siguen aplicando diferencias al acumulado. Actualizar Docker local, documentación y publicar los cambios en el repositorio autorizado.
+
+Implementado: tabla de 337 jugadores con nombre por defecto, opción para incluir espacios de plantilla, edición en celdas, guardado por fila y protección de borradores. Compilación TypeScript/Vite completada y presentación revisada en escritorio y celular sin escribir estadísticas reales.
+

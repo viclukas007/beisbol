@@ -68,7 +68,7 @@ La base se guarda en el volumen `postgres_data`. Reiniciar o reconstruir la app 
 
 En `/admin`:
 
-- **Captura de estadísticas:** equipo, jugador, jornadas 1–30 y corrección de acumulados. Campos JJ, AB, H, 1B, 2B, 3B, HR, RBI, IP, ER, BB, K, W y L; AVG y ERA se calculan al guardar.
+- **Captura de estadísticas:** tabla editable de todos los jugadores activos, con búsqueda, filtro por equipo, jornadas 1–30 y corrección de acumulados. Escribir en las celdas y guardar por fila; cambiar entre Bateo y Pitcheo conserva el borrador. Campos JJ, AB, H, 1B, 2B, 3B, HR, RBI, IP, ER, BB, K, W y L; AVG y ERA se calculan. Se pueden mostrar todos los jugadores o páginas de 25, 50 o 100 registros.
 - **Plantillas:** alta, edición, baja y restauración de jugadores de cada equipo. Selector de socio: sí, no o sin registrar. Los jugadores importados empiezan sin registrar esta condición porque no está en el Excel.
 - **Rol de juegos:** agregar, editar, quitar y restaurar juegos; fecha, hora, equipos, jornada, estado y observaciones. La vista pública permite consultar el calendario.
 - **Historial:** responsable, fecha y valores antes/después de los movimientos.
@@ -80,6 +80,8 @@ En `/admin`:
 La captura por jornada aplica únicamente la diferencia contra la versión anterior al acumulado, conservando los ajustes históricos importados. Un guardado sin cambios no suma estadísticas de nuevo. La corrección directa del acumulado conserva los registros de jornadas. Las versiones evitan sobrescribir cambios de otra ventana.
 
 Las bajas de jugadores conservan sus estadísticas y los retiran de las consultas públicas. Un alta crea acumulados y 30 jornadas en cero. Los juegos retirados pueden recuperarse desde “Juegos retirados”.
+
+En la tabla de captura, los borradores se conservan al buscar, filtrar por equipo o cambiar de página. Las filas modificadas se resaltan y avisan si hay una versión más reciente. Cambiar de jornada o salir de la pantalla pide descartar los cambios pendientes; una fila se puede descartar para cargar sus cifras actuales. Los espacios sin nombre se muestran al activar “Espacios de plantilla”.
 
 La actualización está disponible por captura manual y por carga masiva desde el navegador.
 
