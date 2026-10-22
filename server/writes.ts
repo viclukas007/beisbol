@@ -49,7 +49,7 @@ export async function transaction<T>(pool: Pool, action: (c: PoolClient) => Prom
   catch (error) { await c.query('ROLLBACK'); throw error; }
   finally { c.release(); }
 }
-export const gameColumns = `id,turn,round,to_char(date,'YYYY-MM-DD') AS date,to_char(time,'HH24:MI') AS time,home_team_id AS "homeTeamId",away_team_id AS "awayTeamId",home_score AS "homeScore",away_score AS "awayScore",notes,status,source_cell AS "sourceCell",deleted_at AS "deletedAt",updated_at AS "updatedAt",version`;
+export const gameColumns = `id,turn,round,to_char(date,'YYYY-MM-DD') AS date,to_char(time,'HH24:MI') AS time,home_team_id AS "homeTeamId",away_team_id AS "awayTeamId",home_score AS "homeScore",away_score AS "awayScore",home_hits AS "homeHits",away_hits AS "awayHits",home_errors AS "homeErrors",away_errors AS "awayErrors",notes,status,source_cell AS "sourceCell",deleted_at AS "deletedAt",updated_at AS "updatedAt",version`;
 const rosterColumns = `id,name,team_id AS "teamId",member,active,version`;
 async function rosterValue(c:PoolClient,body:any) {
   if (typeof body?.name !== 'string' || !body.name.trim() || body.name.length>150) throw new InputError('Indica un nombre de hasta 150 caracteres.');
@@ -59,7 +59,9 @@ async function rosterValue(c:PoolClient,body:any) {
   return [body.name.trim(),team,body.member];
 }
 async function gameValue(c: PoolClient, body: any) {
-  const round = integer(body?.round, 'Jornada', 16);
+  const turn = body?.turn ?? 1;
+  if (![1,2].includes(turn)) throw new InputError('Selecciona la vuelta: primera o segunda.');
+  const round = integer(body?.round, 'Jornada', 40);
   const home = integer(body?.homeTeamId, 'Equipo local');
   const away = integer(body?.awayTeamId, 'Equipo visitante');
   if (home === away) throw new InputError('Selecciona dos equipos distintos.');
@@ -77,7 +79,10 @@ async function gameValue(c: PoolClient, body: any) {
   if((homeScore===null)!==(awayScore===null))throw new InputError('Captura los dos marcadores o deja ambos vacíos.');
   if(body.status==='completed'&&homeScore===null)throw new InputError('Para finalizar el juego, captura las carreras del local y del visitante.');
   if(body.status!=='completed'&&homeScore!==null)throw new InputError('Selecciona Finalizado para guardar el marcador final.');
-  return [round,date,time,home,away,body.notes.trim(),body.status,homeScore,awayScore];
+  const detail=['homeHits','awayHits','homeErrors','awayErrors'].map(key=>body?.[key]??null);
+  for(const value of detail)if(value!==null&&(typeof value!=='number'||!Number.isInteger(value)||value<0||value>9999))throw new InputError('Los hits y errores por equipo deben ser enteros entre 0 y 9999.');
+  if(body.status!=='completed'&&detail.some(value=>value!==null))throw new InputError('Los hits y errores por equipo se capturan en juegos finalizados.');
+  return [turn,round,date,time,home,away,body.notes.trim(),body.status,homeScore,awayScore,...detail];
 }
 export function registerWrites(app: Express, pool: Pool) {
   app.post('/api/players',async (req,res)=>{
@@ -167,7 +172,7 @@ export function registerWrites(app: Express, pool: Pool) {
     const responsible = actor(req.body);
     const game = await transaction(pool, async c => {
       const values = await gameValue(c,req.body);
-      const saved = (await c.query(`INSERT INTO games(round,date,time,home_team_id,away_team_id,notes,status,home_score,away_score) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING ${gameColumns}`,values)).rows[0];
+      const saved = (await c.query(`INSERT INTO games(turn,round,date,time,home_team_id,away_team_id,notes,status,home_score,away_score,home_hits,away_hits,home_errors,away_errors) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING ${gameColumns}`,values)).rows[0];
       await audit(c,'game',String(saved.id),'create',null,saved,responsible);
       return saved;
     });
@@ -183,7 +188,7 @@ export function registerWrites(app: Express, pool: Pool) {
       version(req.body?.version,old.version);
       const values = await gameValue(c,req.body);
       if((old.homeTeamId!==req.body.homeTeamId||old.awayTeamId!==req.body.awayTeamId||req.body.status!=='completed')&&(await c.query('SELECT 1 FROM game_player_hits WHERE game_id=$1 AND deleted_at IS NULL LIMIT 1',[id])).rowCount)throw new InputError('Retira las capturas de hits antes de cambiar los equipos o reabrir el juego.',409);
-      const next = (await c.query(`UPDATE games SET round=$1,date=$2,time=$3,home_team_id=$4,away_team_id=$5,notes=$6,status=$7,home_score=$8,away_score=$9,version=version+1 WHERE id=$10 RETURNING ${gameColumns}`,[...values,id])).rows[0];
+      const next = (await c.query(`UPDATE games SET turn=$1,round=$2,date=$3,time=$4,home_team_id=$5,away_team_id=$6,notes=$7,status=$8,home_score=$9,away_score=$10,home_hits=$11,away_hits=$12,home_errors=$13,away_errors=$14,version=version+1 WHERE id=$15 RETURNING ${gameColumns}`,[...values,id])).rows[0];
       await audit(c,'game',String(id),'update',old,next,responsible);
       return next;
     });

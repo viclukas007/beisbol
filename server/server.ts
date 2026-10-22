@@ -8,6 +8,7 @@ import {registerAuth,initializeAdmin} from './auth.ts';
 import {registerImports} from './imports.ts';
 import {registerLeague} from './league.ts';
 import {registerGameHits} from './game-hits.ts';
+import {syncSchedule} from './schedule-sync.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL, max: 8 });
@@ -31,11 +32,13 @@ async function initialize() {
       await client.query(`INSERT INTO round_stats(player_id,round,stats,source_cell) SELECT "playerId",round,stats,"sourceCell" FROM jsonb_to_recordset($1::jsonb) AS x("playerId" int,round int,stats jsonb,"sourceCell" text)`, [JSON.stringify(seed.rounds)]);
       console.log(`Imported ${seed.players.length} roster slots, ${seed.teams.length} teams, ${seed.rounds.length} round rows.`);
     }
-    if (!(await client.query('SELECT id FROM schedule_imports WHERE id=1')).rowCount) {
-      const schedule = JSON.parse(await fs.readFile(path.join(root,'data/schedule.json'),'utf8'));
-      await client.query('INSERT INTO schedule_imports(id,filename,sha256,metadata) VALUES(1,$1,$2,$3)',[schedule.source,schedule.sha256,schedule.metadata]);
-      await client.query(`INSERT INTO games(round,date,time,home_team_id,away_team_id,notes,status,source_cell) SELECT round,date::date,time::time,"homeTeamId","awayTeamId",notes,status,"sourceCell" FROM jsonb_to_recordset($1::jsonb) AS x(round integer,date text,time text,"homeTeamId" integer,"awayTeamId" integer,notes text,status text,"sourceCell" text)`,[JSON.stringify(schedule.games)]);
-      console.log(`Imported ${schedule.games.length} games from Primera Vuelta.`);
+    // Cada versión del Excel del rol se aplica una sola vez, identificada por su huella SHA-256.
+    const schedule = JSON.parse(await fs.readFile(path.join(root,'data/schedule.json'),'utf8'));
+    if (!(await client.query('SELECT 1 FROM schedule_imports WHERE sha256=$1',[schedule.sha256])).rowCount) {
+      const summary = await syncSchedule(client, schedule);
+      await client.query('INSERT INTO schedule_imports(id,filename,sha256,metadata) VALUES((SELECT COALESCE(max(id),0)+1 FROM schedule_imports),$1,$2,$3)',[schedule.source,schedule.sha256,{...schedule.metadata,sync:summary}]);
+      console.log(`Schedule ${schedule.source}: ${summary.inserted} games inserted, ${summary.updated} updated, ${summary.restored} restored, ${summary.removed} removed, ${summary.unchanged} unchanged.`);
+      for (const warning of summary.warnings) console.warn('Schedule:', warning);
     }
     await client.query("SELECT setval('roster_player_ids',GREATEST((SELECT COALESCE(max(id),1) FROM players),(SELECT last_value FROM roster_player_ids)),true)");
     await client.query('COMMIT');
@@ -82,10 +85,10 @@ app.get(['/api/snapshot','/api/admin/snapshot'], async (req, res) => {
     const teams = await client.query('SELECT id,name,color FROM teams ORDER BY id');
     const players = await client.query(`SELECT p.id,p.name,p.original_name AS "originalName",p.team_id AS "teamId",p.placeholder,p.source_cell AS "sourceCell",p.active,p.member,p.version AS "rosterVersion",s.stats,s.version FROM players p JOIN player_stats s ON s.player_id=p.id ORDER BY p.id`);
     const rounds = await client.query(`SELECT player_id AS "playerId",round,stats,source_cell AS "sourceCell",version FROM round_stats ORDER BY player_id,round`);
-    const schedule = await client.query('SELECT filename,metadata FROM schedule_imports WHERE id=1');
+    const schedule = await client.query('SELECT filename,metadata FROM schedule_imports ORDER BY id DESC LIMIT 1');
     const games = await client.query(`SELECT ${gameColumns} FROM games ORDER BY date,time,id`);
     const gameHits = (await client.query(`SELECT h.game_id AS "gameId",h.player_id AS "playerId",p.name,h.team_id AS "teamId",h.hits,h.version,h.deleted_at AS "deletedAt" FROM game_player_hits h JOIN players p ON p.id=h.player_id ORDER BY h.game_id,h.player_id`)).rows;
-    const league = (await client.query(`SELECT name,logo_version AS version,logo IS NOT NULL AS "hasLogo",standings_criteria AS criteria,rules_confirmed AS "rulesConfirmed",rules_notes AS "rulesNotes" FROM league_settings WHERE id=1`)).rows[0];
+    const league = (await client.query(`SELECT name,logo_version AS version,logo IS NOT NULL AS "hasLogo",rules_notes AS "rulesNotes" FROM league_settings WHERE id=1`)).rows[0];
     await client.query('COMMIT');
     res.set('Cache-Control', 'no-store');
     const activePlayers=players.rows.filter(p=>p.active);
@@ -97,7 +100,7 @@ app.get(['/api/snapshot','/api/admin/snapshot'], async (req, res) => {
     const visibleGames=isAdmin?games.rows:games.rows.filter(g=>!g.deletedAt);
     const gameIds=new Set(visibleGames.map(g=>g.id));
     const hitTotals=new Map<string,number>();for(const h of gameHits.filter(h=>!h.deletedAt)){const key=`${h.gameId}:${h.teamId}`;hitTotals.set(key,(hitTotals.get(key)??0)+h.hits);}
-    res.json({ source: source.rows[0].filename, metadata, league:{...league,logoUrl:league.hasLogo?`/api/league/logo?v=${league.version}`:null}, teams: teams.rows, players:roster, rounds:isAdmin?rounds.rows:rounds.rows.filter(r=>ids.has(r.playerId)), schedule:{source:schedule.rows[0].filename,...schedule.rows[0].metadata},games:visibleGames.map(g=>({...g,homeHits:hitTotals.get(`${g.id}:${g.homeTeamId}`)??null,awayHits:hitTotals.get(`${g.id}:${g.awayTeamId}`)??null})),gameHits:isAdmin?gameHits:gameHits.filter(h=>!h.deletedAt&&gameIds.has(h.gameId)), updatedAt: new Date().toISOString() });
+    res.json({ source: source.rows[0].filename, metadata, league:{...league,logoUrl:league.hasLogo?`/api/league/logo?v=${league.version}`:null}, teams: teams.rows, players:roster, rounds:isAdmin?rounds.rows:rounds.rows.filter(r=>ids.has(r.playerId)), schedule:{source:schedule.rows[0].filename,...schedule.rows[0].metadata},games:visibleGames.map(g=>({...g,homePlayerHits:hitTotals.get(`${g.id}:${g.homeTeamId}`)??null,awayPlayerHits:hitTotals.get(`${g.id}:${g.awayTeamId}`)??null})),gameHits:isAdmin?gameHits:gameHits.filter(h=>!h.deletedAt&&gameIds.has(h.gameId)), updatedAt: new Date().toISOString() });
   } catch (error) {
     await client.query('ROLLBACK');
     console.error('Snapshot:', error);

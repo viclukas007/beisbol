@@ -60,8 +60,8 @@ La base se guarda en el volumen `postgres_data`. Reiniciar o reconstruir la app 
 - Cuadro de honor con Top 5 de HITS, HR, RBI, AVG, K, ERA y W.
 - Fichas individuales con acumulado y jornadas con actividad.
 - Datos del torneo con fuente, metodología y observaciones de importación.
-- Rol de juegos en el menú izquierdo: 120 juegos de Primera Vuelta, con filtros por equipo y jornada.
-- Tabla de posiciones calculada a partir de partidos finalizados: JJ, G, P, E, CF, CC, DIF, PCT y hits capturados por partido.
+- Rol de juegos en el menú izquierdo: 240 juegos de Primera y Segunda Vuelta (jornadas 1–16 y 17–31), con filtros por vuelta, equipo y jornada, marcadores y hits/errores por equipo.
+- Tabla de posiciones calculada a partir de partidos finalizados, ordenada con el reglamento de la liga (porcentaje de victorias y criterios de desempate a–d) y con la columna Desempate que explica cada lugar; se puede ver por temporada o por vuelta.
 - Hits de cada jugador por partido, accesibles desde el rol y su ficha.
 
 ## Backend de administración
@@ -70,11 +70,11 @@ En `/admin`:
 
 - **Captura de estadísticas:** tabla editable de todos los jugadores activos, con búsqueda, filtro por equipo, jornadas 1–30 y corrección de acumulados. Escribir en las celdas y guardar por fila; cambiar entre Bateo y Pitcheo conserva el borrador. Campos JJ, AB, H, 1B, 2B, 3B, HR, RBI, IP, ER, BB, K, W y L; AVG y ERA se calculan. Se pueden mostrar todos los jugadores o páginas de 25, 50 o 100 registros.
 - **Plantillas:** alta, edición, baja y restauración de jugadores de cada equipo. Selector de socio: sí, no o sin registrar. Los jugadores importados empiezan sin registrar esta condición porque no está en el Excel.
-- **Rol de juegos:** agregar, editar, quitar y restaurar juegos; fecha, hora, equipos, jornada, estado y observaciones. La vista pública permite consultar el calendario.
+- **Rol de juegos:** agregar, editar, quitar y restaurar juegos; vuelta, jornada, fecha, hora, equipos, estado, marcador, hits y errores por equipo y observaciones. La vista pública permite consultar el calendario.
 - **Historial:** responsable, fecha y valores antes/después de los movimientos.
 - **Carga masiva:** jugadores y estadísticas en CSV/XLSX, plantillas con datos actuales, errores por fila, vista previa y aplicación conjunta.
 - **Listas de jugadores:** plantilla activa por equipo, condición de socio y espacios de firma; descargar CSV o imprimir/guardar PDF.
-- **Liga y reglamento:** cargar la imagen oficial, editar el nombre y configurar los criterios de clasificación de equipos.
+- **Liga y reglamento:** cargar la imagen oficial, editar el nombre y las observaciones que se muestran bajo la tabla de posiciones. El orden de la tabla aplica el reglamento aprobado y no se configura desde la pantalla.
 - **Hits por partido:** capturar los hits de cada jugador de un partido finalizado.
 
 La captura por jornada aplica únicamente la diferencia contra la versión anterior al acumulado, conservando los ajustes históricos importados. Un guardado sin cambios no suma estadísticas de nuevo. La corrección directa del acumulado conserva los registros de jornadas. Las versiones evitan sobrescribir cambios de otra ventana.
@@ -105,9 +105,15 @@ No mezclar en una misma carga acumulados y jornadas del mismo jugador. Si los aj
 
 ## Tabla de posiciones, imagen y listas
 
-**Tabla de posiciones** usa únicamente juegos finalizados, con los dos marcadores, que no estén retirados. No utiliza W/L de los pitchers. Los empates se cuentan en E y el PCT mostrado es G / (G + P), excluyendo empates.
+**Tabla de posiciones** usa únicamente juegos finalizados, con los dos marcadores, que no estén retirados. No utiliza W/L de los pitchers. Se puede ver la temporada completa o una vuelta.
 
-El usuario confirmó que enviará los desempates. Hasta recibir y confirmar el reglamento, los equipos aparecen por nombre y sin posición oficial. En **Liga y reglamento** se puede ordenar por porcentaje, juegos ganados, diferencia de carreras, carreras a favor y menos carreras en contra. Los criterios se aplican en el orden indicado; los empates restantes comparten posición. Reglas de puntos, juego directo u otras fórmulas requieren incorporarse cuando se entregue el reglamento. Los líderes individuales comparten posición por valores idénticos y el Top 5 incluye a quienes empaten con el quinto.
+El orden aplica el punto 4 del reglamento de la liga, implementado en `src/standings-rules.ts`:
+
+1. Porcentaje de victorias: partidos ganados entre partidos jugados (los empates cuentan como jugados y se muestran en E).
+2. Con el mismo porcentaje entre dos equipos: a) resultados frente a frente; b) diferencia de carreras en los partidos entre ambos; c) carreras anotadas en toda la temporada; d) volado con moneda.
+3. Con tres o más equipos empatados: si uno tiene dominio toma el primer lugar del grupo y el resto se vuelve a desempatar desde a); si no hay dominio, se pasa a c).
+
+Lectura aplicada de “dominio”: el equipo que enfrentó a todos los demás empatados y tiene el mejor porcentaje de victorias frente a ellos. Si dos equipos no se han enfrentado, se pasa a c). Los equipos que quedan empatados tras c) comparten posición y se marcan como volado pendiente; el resultado del volado se registra cuando la liga lo realice. La columna **Desempate** indica el inciso que decidió cada lugar. Con el filtro por vuelta, las carreras anotadas del inciso c) son las de esa vuelta. Los líderes individuales comparten posición por valores idénticos y el Top 5 incluye a quienes empaten con el quinto.
 
 El espacio para la imagen oficial está preparado en **Liga y reglamento**: PNG, JPG o WebP, recomendado 512 × 512 px y hasta 2 MB. La imagen se almacena en PostgreSQL y se conserva al reconstruir Docker o desplegar EasyPanel.
 
@@ -125,9 +131,9 @@ Las claves se almacenan con scrypt y sal aleatoria. Las sesiones de 12 horas usa
 
 ## Marcadores de los juegos
 
-En **Backend → Rol de juegos → Editar**, seleccionar **Finalizado** y capturar **Carreras del local** y **Carreras del visitante**. Se requieren ambas cifras, enteras de 0 a 9999. Los resultados guardados se muestran en el calendario público y quedan en el historial. El marcador de equipos y las estadísticas individuales se capturan por separado.
+En **Backend → Rol de juegos → Editar**, seleccionar **Finalizado** y capturar **Carreras del local** y **Carreras del visitante**. Se requieren ambas cifras, enteras de 0 a 9999. Opcionalmente se capturan los hits y errores de cada equipo, que corresponden a las columnas H y E de la hoja Captura de Resultados y alimentan las columnas H y ERR de la tabla de posiciones. Los resultados guardados se muestran en el calendario público y quedan en el historial. El marcador de equipos y las estadísticas individuales se capturan por separado.
 
-Los juegos del Excel empiezan sin marcador porque el rol no incluye resultados. Un marcador vacío significa resultado sin registrar; un cero significa cero carreras.
+Los marcadores de la hoja **Captura de Resultados** del Excel se importan al desplegar cada versión del archivo (ver más abajo). Un marcador vacío significa resultado sin registrar; un cero significa cero carreras. Los códigos de la columna A de esa hoja se interpretan así: `cap` finaliza el juego con su marcador; `ff` lo finaliza como forfeit y lo anota en las observaciones; `Susp Luz` lo deja como pospuesto con la nota “Suspendido por luz”. Un código distinto detiene la importación hasta que se agregue a `import_schedule.py`.
 
 ## Hits de cada jugador por partido
 
@@ -162,7 +168,7 @@ Un trigger en PostgreSQL emite `NOTIFY` al cambiar estadísticas. La API escucha
 
 Los datos históricos no se muestran como partidos en curso. Los cambios guardados desde `/admin` se reflejan en las consultas públicas.
 
-El calendario se importó exclusivamente de `ROL 2026-2027 LISTO.xlsx`, pestaña `Primera Vuelta`: 120 juegos y 16 jornadas. No se importó Segunda Vuelta. Las tres fechas adicionales con asterisco se conservaron como observaciones; la fecha del juego corresponde a la columna Fecha del Excel.
+El calendario y los resultados se importan de `ROL 2026-2027 LISTO V11.xlsx`: `Primera Vuelta` (120 juegos, jornadas 1–16, del 31 de agosto al 17 de diciembre de 2026), `Segunda Vuelta` (120 juegos, jornadas 17–31, del 11 de enero al 20 de mayo de 2027) y `Captura de Resultados` (marcadores, hits y errores por equipo, códigos `cap`, `ff` y `Susp Luz`). Cada juego conserva la celda de origen (`sourceCell`), que es la clave para actualizar la base sin duplicar juegos. La fecha del juego corresponde a la columna Fecha del Excel; la versión V11 ya no trae las notas con asterisco de la primera importación.
 
 AVG es H / AB (`Bucaneros!K2`). El mínimo de AVG sale de `Top 5 Líderes!O3`, cuyo promedio es `Líderes y Maestra!D2:D353`: 1,412 AB / 352 plazas = 4.01136, equivalente a 5 AB enteros. La app aplica este promedio a los espacios activos actuales, incluidos los espacios sin nombre; las bajas dejan de contar. Al elegir jornada, usa los AB de esa jornada de toda la liga, antes de filtrar por equipo.
 
@@ -190,7 +196,7 @@ Vite abre el frontend en el puerto 5173 y redirige `/api` a la app de Docker en 
 - `DELETE /api/players/:id` y `POST /api/players/:id/restore`: baja y restauración.
 - `PUT /api/players/:id/stats`: corregir acumulado.
 - `PUT /api/players/:id/rounds/:round`: guardar jornada y aplicar diferencia al acumulado.
-- `POST /api/games` y `PUT /api/games/:id`: agregar y editar juego.
+- `POST /api/games` y `PUT /api/games/:id`: agregar y editar juego (`turn` 1 o 2, `round` 1–40, marcador, `homeHits`, `awayHits`, `homeErrors` y `awayErrors` opcionales en juegos finalizados).
 - `DELETE /api/games/:id` y `POST /api/games/:id/restore`: quitar y restaurar.
 - `GET /api/changes`: últimos 100 movimientos; filtros opcionales `entity` y `entityId`.
 - `GET /api/admin/snapshot`: datos completos de administración, incluidos jugadores y juegos retirados; requiere sesión.
@@ -203,7 +209,7 @@ Vite abre el frontend en el puerto 5173 y redirige `/api` a la app de Docker en 
 - `GET /api/admin/imports`: historial de 30 cargas recientes.
 - `GET /api/admin/templates/players.csv` y `/api/admin/templates/stats.csv`: plantillas con datos actuales; filtros `teamId`, `round` y `blank=1`.
 - `GET /api/admin/roster.csv`: lista de jugadores activos para el equipo seleccionado.
-- `PUT /api/admin/league/settings`: nombre, reglamento y criterios de clasificación.
+- `PUT /api/admin/league/settings`: nombre de la liga y observaciones del reglamento.
 - `PUT /api/admin/league/logo`: imagen oficial; `GET /api/league/logo` la sirve públicamente.
 - `PUT /api/games/:gameId/players/:playerId/hits`: capturar o retirar hits individuales, con `version` y `gameVersion`.
 
@@ -216,6 +222,24 @@ python read_workbook.py
 python import_data.py
 ```
 
-Esto genera los archivos de importación; no reemplaza una base ya importada. La carga desde el navegador actualiza el torneo actual; la gestión de nuevas temporadas permanece pendiente.
+Esto genera los archivos de importación de jugadores y estadísticas; no reemplaza una base ya importada. La carga desde el navegador actualiza el torneo actual; la gestión de nuevas temporadas permanece pendiente.
+
+## Actualizar el rol y los resultados desde el Excel
+
+Cuando llegue una versión nueva del rol (por ejemplo V12), copiarla a esta carpeta y regenerar `data/schedule.json`:
+
+```powershell
+python read_schedule.py "ROL 2026-2027 LISTO V12.xlsx"
+python import_schedule.py
+```
+
+Requiere `openpyxl` y que el archivo tenga las pestañas `Equipos`, `Primera Vuelta`, `Segunda Vuelta` y `Captura de Resultados` con los valores calculados guardados por Excel. El JSON lleva la huella SHA-256 del archivo. Al arrancar, el servidor compara esa huella con las registradas en `schedule_imports`; si es nueva, aplica el archivo en una transacción (`server/schedule-sync.ts`) y la registra, así que basta con desplegar para actualizar la base local o la de EasyPanel:
+
+- Los juegos se identifican por su celda de origen: los existentes se actualizan y los nuevos se insertan.
+- Calendario (vuelta, jornada, fecha, hora, equipos y observaciones) manda siempre el Excel.
+- Resultados: si la hoja tiene marcador o código, se aplica; si no tiene nada para ese juego, se conserva lo capturado en la app.
+- Un juego con hits individuales capturados conserva equipos, estado y marcador aunque el Excel difiera; el arranque lo avisa en la bitácora de consola.
+- Los juegos de esas pestañas que ya no aparecen en el Excel se retiran (recuperables en “Juegos retirados”); los juegos agregados a mano no se tocan.
+- Cada cambio queda en el historial con el responsable `Importación <archivo>`.
 
 Referencias del stack: [React](https://react.dev/versions), [Vite](https://vite.dev/guide/), [PostgreSQL NOTIFY](https://www.postgresql.org/docs/17/sql-notify.html).

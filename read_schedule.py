@@ -1,56 +1,65 @@
-"""Read only the confirmed first round schedule from the supplied workbook."""
+"""Read the schedule sheets and the results sheet from the league workbook.
+
+Usage: python read_schedule.py ["ROL 2026-2027 LISTO V11.xlsx"]
+
+Writes data/schedule-source.json with the raw cell values of Primera Vuelta,
+Segunda Vuelta and Captura de Resultados. For the results sheet the formulas of
+column B are kept so every result row can be traced to its schedule row.
+"""
 import json
-import re
-import zipfile
+import sys
 import unicodedata
-import xml.etree.ElementTree as ET
-from datetime import datetime, timedelta
+from datetime import date, datetime
 from pathlib import Path
 
+import openpyxl
+
 base = Path(__file__).parent
-source = base / 'ROL 2026-2027 LISTO.xlsx'
-ns = {'m': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
-with zipfile.ZipFile(source) as archive:
-    workbook = ET.fromstring(archive.read('xl/workbook.xml'))
-    sheets = list(workbook.find('m:sheets', ns))
-    print('Sheets:', json.dumps([sheet.attrib['name'] for sheet in sheets], ensure_ascii=True))
-    matches = [s for s in sheets if 'primera' in s.attrib['name'].lower()]
-    if len(matches) != 1:
-        raise ValueError('Identify the Primera vuelta sheet by its exact name before extraction.')
-    sheet = matches[0]
-    strings = [''.join(x.itertext()) for x in ET.fromstring(archive.read('xl/sharedStrings.xml')).findall('m:si', ns)] if 'xl/sharedStrings.xml' in archive.namelist() else []
-    relations = {x.attrib['Id']: x.attrib['Target'] for x in ET.fromstring(archive.read('xl/_rels/workbook.xml.rels'))}
-    target = relations[sheet.attrib['{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id']]
-    root = ET.fromstring(archive.read(target.lstrip('/') if target.startswith('/') else 'xl/' + target))
-    styles = ET.fromstring(archive.read('xl/styles.xml'))
-    formats = {int(x.attrib['numFmtId']): x.attrib['formatCode'] for x in styles.findall('m:numFmts/m:numFmt', ns)}
-    style_formats = [int(x.attrib.get('numFmtId', 0)) for x in styles.find('m:cellXfs', ns)]
+source = base / (sys.argv[1] if len(sys.argv) > 1 else 'ROL 2026-2027 LISTO V11.xlsx')
+SCHEDULE_SHEETS = ['Primera Vuelta', 'Segunda Vuelta']
+RESULTS_SHEET = 'Captura de Resultados'
+
+
+def clean(value):
+    if isinstance(value, datetime):
+        return value.date().isoformat()
+    if isinstance(value, date):
+        return value.isoformat()
+    if isinstance(value, str):
+        return unicodedata.normalize('NFC', value)
+    return value
+
+
+def read_rows(sheet, formulas=None, formula_columns=()):
     rows = []
-    for row in root.findall('m:sheetData/m:row', ns):
+    for row in sheet.iter_rows():
         cells = []
         for cell in row:
-            value = cell.find('m:v', ns)
-            val = value.text if value is not None else None
-            if cell.attrib.get('t') == 's' and val is not None:
-                val = unicodedata.normalize('NFC', strings[int(val)])
-            elif cell.attrib.get('t') == 'inlineStr':
-                val = ''.join(cell.find('m:is', ns).itertext())
-            elif val is not None and cell.attrib.get('t') not in ('str', 'e', 'b'):
-                val = float(val) if '.' in val else int(val)
-            if val is not None:
-                fmt = style_formats[int(cell.attrib.get('s', 0))]
-                cells.append({'cell': cell.attrib['r'], 'value': val, 'numberFormat': formats.get(fmt, str(fmt))})
+            if cell.value is None:
+                continue
+            entry = {'cell': cell.coordinate, 'value': clean(cell.value)}
+            if formulas is not None and cell.column_letter in formula_columns:
+                raw = formulas[cell.coordinate].value
+                if isinstance(raw, str) and raw.startswith('='):
+                    entry['formula'] = raw
+            cells.append(entry)
         if cells:
             rows.append(cells)
-    result = {'source': source.name, 'sheet': sheet.attrib['name'], 'rows': rows, 'merges': [m.attrib['ref'] for m in root.findall('m:mergeCells/m:mergeCell', ns)]}
-    (base / 'data' / 'schedule-source.json').write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8')
-    for row in rows[:10]:
-        print(json.dumps(row, ensure_ascii=True))
-    print('Rows:', len(rows))
-    game_rows = []
-    for row in rows:
-        values = {re.sub(r'\d', '', cell['cell']): cell['value'] for cell in row}
-        if str(values.get('B', '')).startswith('Jornada ') and values.get('F') and values.get('G'):
-            game_rows.append(values)
-    dates = [(datetime(1899, 12, 30) + timedelta(days=row['C'])).date().isoformat() for row in game_rows]
-    print(json.dumps({'games': len(game_rows), 'rounds': sorted({int(re.search(r'\d+', row['B']).group()) for row in game_rows}), 'start': min(dates), 'end': max(dates), 'notes': [row for row in game_rows if row.get('H')], 'tail': rows[-8:]}, ensure_ascii=True))
+    return rows
+
+
+values = openpyxl.load_workbook(source, data_only=True)
+formulas = openpyxl.load_workbook(source, data_only=False)
+print('Sheets:', json.dumps(values.sheetnames, ensure_ascii=True))
+for name in SCHEDULE_SHEETS + [RESULTS_SHEET]:
+    if name not in values.sheetnames:
+        raise ValueError(f'Sheet not found: {name}')
+teams = [clean(row[2]) for row in values['Equipos'].iter_rows(min_row=6, max_col=3, values_only=True) if row[2]]
+sheets = {name: {'rows': read_rows(values[name])} for name in SCHEDULE_SHEETS}
+sheets[RESULTS_SHEET] = {'rows': read_rows(values[RESULTS_SHEET], formulas[RESULTS_SHEET], 'B')}
+result = {'source': source.name, 'teams': teams, 'scheduleSheets': SCHEDULE_SHEETS, 'resultsSheet': RESULTS_SHEET, 'sheets': sheets}
+(base / 'data' / 'schedule-source.json').write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding='utf-8')
+for name, sheet in sheets.items():
+    games = sum(1 for row in sheet['rows'] if any(c['cell'].startswith('B') and str(c['value']).startswith('Jornada ') for c in row))
+    print(f'{name}: {len(sheet["rows"])} rows, {games} game rows')
+print('Teams:', json.dumps(teams, ensure_ascii=True))

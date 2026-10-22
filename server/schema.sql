@@ -71,8 +71,8 @@ CREATE TABLE IF NOT EXISTS schedule_imports (
 );
 CREATE TABLE IF NOT EXISTS games (
   id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  turn integer NOT NULL DEFAULT 1 CHECK (turn = 1),
-  round integer NOT NULL CHECK (round BETWEEN 1 AND 16),
+  turn integer NOT NULL DEFAULT 1 CHECK (turn IN (1,2)),
+  round integer NOT NULL CHECK (round BETWEEN 1 AND 40),
   date date NOT NULL, time time NOT NULL,
   home_team_id integer NOT NULL REFERENCES teams(id),
   away_team_id integer NOT NULL REFERENCES teams(id),
@@ -85,6 +85,15 @@ CREATE TABLE IF NOT EXISTS games (
 CREATE INDEX IF NOT EXISTS games_calendar_idx ON games(date,time);
 ALTER TABLE games ADD COLUMN IF NOT EXISTS home_score integer CHECK (home_score BETWEEN 0 AND 9999);
 ALTER TABLE games ADD COLUMN IF NOT EXISTS away_score integer CHECK (away_score BETWEEN 0 AND 9999);
+-- Segunda vuelta (turn 2, jornadas 17-31) y totales por equipo de la hoja Captura de Resultados.
+ALTER TABLE games DROP CONSTRAINT IF EXISTS games_turn_check;
+ALTER TABLE games ADD CONSTRAINT games_turn_check CHECK (turn IN (1,2));
+ALTER TABLE games DROP CONSTRAINT IF EXISTS games_round_check;
+ALTER TABLE games ADD CONSTRAINT games_round_check CHECK (round BETWEEN 1 AND 40);
+ALTER TABLE games ADD COLUMN IF NOT EXISTS home_hits integer CHECK (home_hits BETWEEN 0 AND 9999);
+ALTER TABLE games ADD COLUMN IF NOT EXISTS away_hits integer CHECK (away_hits BETWEEN 0 AND 9999);
+ALTER TABLE games ADD COLUMN IF NOT EXISTS home_errors integer CHECK (home_errors BETWEEN 0 AND 9999);
+ALTER TABLE games ADD COLUMN IF NOT EXISTS away_errors integer CHECK (away_errors BETWEEN 0 AND 9999);
 CREATE TABLE IF NOT EXISTS audit_log (
   id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   entity text NOT NULL, entity_id text NOT NULL, operation text NOT NULL,

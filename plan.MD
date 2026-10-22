@@ -183,3 +183,18 @@ Reemplazar el desplegable individual de Captura de estadísticas por una tabla d
 
 Implementado: tabla de 337 jugadores con nombre por defecto, opción para incluir espacios de plantilla, edición en celdas, guardado por fila y protección de borradores. Compilación TypeScript/Vite completada y presentación revisada en escritorio y celular sin escribir estadísticas reales.
 
+
+## Rol V11, segunda vuelta y reglamento de desempate
+
+Solicitud del 22 de octubre de 2026: actualizar los datos con `ROL 2026-2027 LISTO V11.xlsx` y aplicar los criterios de desempate del reglamento (punto 4).
+
+- [x] Lectura del V11: `Primera Vuelta` sin cambios de fechas (solo desaparecen las notas con asterisco), `Segunda Vuelta` con 120 juegos (jornadas 17–31, del 11 de enero al 20 de mayo de 2027) y `Captura de Resultados` con 41 marcadores, 1 forfeit (`ff`) y 2 juegos suspendidos por luz (`Susp Luz`). Sin hits ni errores capturados todavía.
+- [x] `read_schedule.py` e `import_schedule.py` reescritos con openpyxl: generan `data/schedule.json` con ambas vueltas, resultados y la huella SHA-256 del archivo. Los códigos desconocidos detienen la importación.
+- [x] `server/schedule-sync.ts`: aplica cada versión del Excel una sola vez sobre la base existente, identificando juegos por celda de origen, con historial y sin pisar resultados capturados en la app cuando el Excel no los tiene.
+- [x] Esquema: `turn` 1 o 2, jornadas hasta 40, columnas `home_hits`, `away_hits`, `home_errors` y `away_errors`.
+- [x] Rol de juegos con filtro por vuelta, hits y errores por equipo en el marcador y en el formulario de edición.
+- [x] Tabla de posiciones con el reglamento (`src/standings-rules.ts`): PCT = G / JJ; empates de dos equipos por incisos a–d; tres o más por dominio y, sin dominio, inciso c. Columna Desempate con el inciso aplicado; los volados pendientes comparten posición. Filtro por temporada o vuelta.
+- [x] Liga y reglamento: se retiran los criterios configurables; quedan nombre, imagen y observaciones.
+- [x] Verificación: la tabla calculada coincide con la hoja `Tabla de Posiciones` del V11 (JJ, JG, JP, CF, CC y DIF de los 16 equipos).
+
+Interpretación registrada de “dominio” para grupos de tres o más: el equipo que enfrentó a todos los demás empatados y tiene el mejor porcentaje frente a ellos. Si la liga usa otra lectura, se ajusta en `src/standings-rules.ts`. El resultado del volado (inciso d) se captura cuando la liga lo realice.

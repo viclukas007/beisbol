@@ -2,7 +2,6 @@ import type {Express} from 'express';
 import type {Pool} from 'pg';
 import {InputError,transaction,audit,counts} from './writes.ts';
 
-const criteria=['pct','wins','difference','runsFor','runsAgainst'];
 function csvCell(value:unknown) {
   let text=String(value??'');
   if(typeof value==='string'&&/^[\s]*[=+\-@]/.test(text))text="'"+text;
@@ -20,15 +19,14 @@ export function registerLeague(app:Express,pool:Pool) {
     res.send(row.logo);
   });
   app.put('/api/admin/league/settings',async(req,res)=>{
-    const {name,criteria:order,rulesConfirmed,rulesNotes,version}=req.body??{};
+    // El orden de la tabla de posiciones es el del reglamento de la liga (ver src/standings-rules.ts); aquí solo se guardan nombre y observaciones.
+    const {name,rulesNotes,version}=req.body??{};
     if(typeof name!=='string'||!name.trim()||name.length>150)throw new InputError('Indica el nombre de la liga (hasta 150 caracteres).');
-    if(!Array.isArray(order)||order.length>criteria.length||new Set(order).size!==order.length||order.some(key=>!criteria.includes(key)))throw new InputError('Orden de clasificación no válido.');
-    if(typeof rulesConfirmed!=='boolean'||typeof rulesNotes!=='string'||rulesNotes.length>4000)throw new InputError('Revisa el reglamento y su confirmación.');
-    if(rulesConfirmed&&!order.length)throw new InputError('Selecciona al menos un criterio antes de confirmar el orden.');
+    if(typeof rulesNotes!=='string'||rulesNotes.length>4000)throw new InputError('Las observaciones del reglamento admiten hasta 4000 caracteres.');
     await transaction(pool,async c=>{
-      const before=(await c.query('SELECT name,standings_criteria,rules_confirmed,rules_notes,logo_version FROM league_settings WHERE id=1 FOR UPDATE')).rows[0];
+      const before=(await c.query('SELECT name,rules_notes,logo_version FROM league_settings WHERE id=1 FOR UPDATE')).rows[0];
       if(before.logo_version!==version)throw new InputError('La configuración cambió. Actualiza y vuelve a guardar.',409);
-      const after=(await c.query('UPDATE league_settings SET name=$1,standings_criteria=$2,rules_confirmed=$3,rules_notes=$4,logo_version=logo_version+1,updated_at=now() WHERE id=1 RETURNING name,standings_criteria,rules_confirmed,rules_notes,logo_version',[name.trim(),JSON.stringify(order),rulesConfirmed,rulesNotes.trim()])).rows[0];
+      const after=(await c.query('UPDATE league_settings SET name=$1,rules_notes=$2,logo_version=logo_version+1,updated_at=now() WHERE id=1 RETURNING name,rules_notes,logo_version',[name.trim(),rulesNotes.trim()])).rows[0];
       await audit(c,'league','1','rules_update',before,after,res.locals.auth.email);
     });res.json({ok:true});
   });

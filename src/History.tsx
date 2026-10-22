@@ -1,6 +1,6 @@
 import {useEffect,useState} from 'react';
 import type {Change,Snapshot} from './types';
-const operations:Record<string,string>={create:'Alta',update:'Edición',remove:'Baja',restore:'Restauración',round_delta:'Actualización por jornada'};
+const operations:Record<string,string>={create:'Alta',update:'Edición',remove:'Baja',restore:'Restauración',round_delta:'Actualización por jornada',import:'Importación del Excel'};
 export default function History({data,entity,entityId}:{data:Snapshot;entity?:string;entityId?:string}) {
   const [rows,setRows]=useState<Change[]>([]);
   const [error,setError]=useState('');
