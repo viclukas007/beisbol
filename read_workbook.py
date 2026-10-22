@@ -1,10 +1,15 @@
+"""Read the statistics workbook (one sheet per team) into workbook-source.json.
+
+Usage: python read_workbook.py ["Estadisticas_Softbol_Torneo_Completo vfinal.xlsx"]
+"""
+import sys
 import zipfile
 import xml.etree.ElementTree as ET
 import json
 from pathlib import Path
 
 base = Path(__file__).parent
-source = next(base.glob('*.xlsx'))
+source = base / (sys.argv[1] if len(sys.argv) > 1 else 'Estadisticas_Softbol_Torneo_Completo vfinal.xlsx')
 ns = {'m': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
 with zipfile.ZipFile(source) as z:
     strings = [''.join(x.itertext()) for x in ET.fromstring(z.read('xl/sharedStrings.xml')).findall('m:si', ns)] if 'xl/sharedStrings.xml' in z.namelist() else []

@@ -1,14 +1,18 @@
 {
   "teams": 16,
   "rosterSlots": 352,
-  "namedPlayers": 337,
-  "placeholderSlots": 15,
+  "namedPlayers": 339,
+  "placeholderSlots": 13,
   "roundRows": 10560,
   "roundsWithActivity": [
     1,
     2,
     3,
-    4
+    4,
+    5,
+    6,
+    7,
+    8
   ],
   "masterDifferences": [
     {
@@ -17,7 +21,7 @@
       "kind": "master_vs_team"
     }
   ],
-  "minimumAb": 4.011363636363637,
+  "minimumAb": 7.238636363636363,
   "minimumIp": 4,
   "eraInnings": 7
 }

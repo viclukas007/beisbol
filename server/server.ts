@@ -9,6 +9,7 @@ import {registerImports} from './imports.ts';
 import {registerLeague} from './league.ts';
 import {registerGameHits} from './game-hits.ts';
 import {syncSchedule} from './schedule-sync.ts';
+import {syncStats} from './stats-sync.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL, max: 8 });
@@ -22,15 +23,22 @@ async function initialize() {
     await client.query('SELECT pg_advisory_xact_lock(827419)');
     await client.query(await fs.readFile(path.join(root, 'server/schema.sql'), 'utf8'));
     await initializeAdmin(client);
+    const seed = JSON.parse(await fs.readFile(path.join(root, 'data/seed.json'), 'utf8'));
     const existing = await client.query('SELECT id FROM import_sources WHERE id = 1');
     if (!existing.rowCount) {
-      const seed = JSON.parse(await fs.readFile(path.join(root, 'data/seed.json'), 'utf8'));
       await client.query('INSERT INTO import_sources(id,filename,sha256,metadata) VALUES(1,$1,$2,$3)', [seed.source, seed.sha256, seed.metadata]);
       await client.query(`INSERT INTO teams SELECT id,name,color FROM jsonb_to_recordset($1::jsonb) AS x(id int,name text,color text)`, [JSON.stringify(seed.teams)]);
       await client.query(`INSERT INTO players SELECT id,"teamId",name,"originalName",placeholder,"sourceCell" FROM jsonb_to_recordset($1::jsonb) AS x(id int,"teamId" int,name text,"originalName" text,placeholder boolean,"sourceCell" text)`, [JSON.stringify(seed.players)]);
       await client.query(`INSERT INTO player_stats(player_id,stats) SELECT id,stats FROM jsonb_to_recordset($1::jsonb) AS x(id int,stats jsonb)`, [JSON.stringify(seed.players)]);
       await client.query(`INSERT INTO round_stats(player_id,round,stats,source_cell) SELECT "playerId",round,stats,"sourceCell" FROM jsonb_to_recordset($1::jsonb) AS x("playerId" int,round int,stats jsonb,"sourceCell" text)`, [JSON.stringify(seed.rounds)]);
       console.log(`Imported ${seed.players.length} roster slots, ${seed.teams.length} teams, ${seed.rounds.length} round rows.`);
+    }
+    // Cada versión del libro de estadísticas se aplica una sola vez, identificada por su huella SHA-256.
+    if (!(await client.query('SELECT 1 FROM import_sources WHERE sha256=$1',[seed.sha256])).rowCount) {
+      const summary = await syncStats(client, seed);
+      await client.query('INSERT INTO import_sources(id,filename,sha256,metadata) VALUES((SELECT COALESCE(max(id),0)+1 FROM import_sources),$1,$2,$3)',[seed.source,seed.sha256,{...seed.metadata,sync:summary}]);
+      console.log(`Statistics ${seed.source}: ${summary.playersCreated} players created, ${summary.playersRenamed} renamed, ${summary.statsUpdated} totals updated, ${summary.roundsUpdated} round rows updated, ${summary.unchanged} unchanged.`);
+      for (const warning of summary.warnings) console.warn('Statistics:', warning);
     }
     // Cada versión del Excel del rol se aplica una sola vez, identificada por su huella SHA-256.
     const schedule = JSON.parse(await fs.readFile(path.join(root,'data/schedule.json'),'utf8'));
@@ -81,7 +89,7 @@ app.get(['/api/snapshot','/api/admin/snapshot'], async (req, res) => {
   const client = await pool.connect();
   try {
     await client.query('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY');
-    const source = await client.query('SELECT filename, metadata FROM import_sources WHERE id = 1');
+    const source = await client.query('SELECT filename, metadata FROM import_sources ORDER BY id DESC LIMIT 1');
     const teams = await client.query('SELECT id,name,color FROM teams ORDER BY id');
     const players = await client.query(`SELECT p.id,p.name,p.original_name AS "originalName",p.team_id AS "teamId",p.placeholder,p.source_cell AS "sourceCell",p.active,p.member,p.version AS "rosterVersion",s.stats,s.version FROM players p JOIN player_stats s ON s.player_id=p.id ORDER BY p.id`);
     const rounds = await client.query(`SELECT player_id AS "playerId",round,stats,source_cell AS "sourceCell",version FROM round_stats ORDER BY player_id,round`);

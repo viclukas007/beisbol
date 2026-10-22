@@ -198,3 +198,10 @@ Solicitud del 22 de octubre de 2026: actualizar los datos con `ROL 2026-2027 LIS
 - [x] Verificación: la tabla calculada coincide con la hoja `Tabla de Posiciones` del V11 (JJ, JG, JP, CF, CC y DIF de los 16 equipos).
 
 Interpretación registrada de “dominio” para grupos de tres o más: el equipo que enfrentó a todos los demás empatados y tiene el mejor porcentaje frente a ellos. Si la liga usa otra lectura, se ajusta en `src/standings-rules.ts`. El resultado del volado (inciso d) se captura cuando la liga lo realice.
+
+## Libro de estadísticas del 22 de octubre de 2026
+
+- [x] `Estadisticas_Softbol_Torneo_Completo vfinal.xlsx` actualizado por la liga: mismas 352 plazas y mismo orden, jornadas 1–8 con actividad, 2,548 AB y 1,029 hits acumulados; dos espacios ocupados (Fernando Canto en Tigres y Manuel Rodríguez en Cebolleros).
+- [x] `read_workbook.py` acepta la ruta del archivo; `data/seed.json` regenerado con la huella nueva.
+- [x] `server/stats-sync.ts`: aplica cada versión del libro una sola vez sobre la base existente por ID estable, con historial; conserva nombres editados en la app y avisa.
+- [x] El snapshot toma la última importación registrada como fuente de las estadísticas.

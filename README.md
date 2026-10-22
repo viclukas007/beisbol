@@ -160,9 +160,9 @@ Copiar los MP4 a `public/ads` y recargar la página. La carpeta está montada en
 
 ## Datos y tiempo real
 
-Se importan 337 jugadores con nombre y 15 espacios `Jugador N`, además de 10,560 filas de jornadas. Hay actividad en las jornadas 1–4. La semilla completa está en `data/seed.json`; el informe está en `data/import-report.json`.
+Se importan 339 jugadores con nombre y 13 espacios `Jugador N`, además de 10,560 filas de jornadas. La versión del 22 de octubre de 2026 del libro de estadísticas tiene actividad en las jornadas 1–8. La semilla completa está en `data/seed.json`; el informe está en `data/import-report.json`.
 
-El servidor importa la semilla en una transacción únicamente cuando la base no tiene una importación inicial. Las estadísticas acumuladas y las jornadas se guardan por separado para conservar los valores del archivo. El Excel no se modifica.
+El servidor importa la semilla completa en una transacción cuando la base está vacía. Cuando la base ya existe y `data/seed.json` lleva una huella SHA-256 nueva, aplica esa versión del libro una sola vez (`server/stats-sync.ts`): identifica a cada jugador por su ID estable (equipo × 100 + fila de la plantilla), reemplaza acumulados y jornadas con los valores del Excel, da nombre a los espacios que la liga haya ocupado y crea los jugadores nuevos. Un nombre cambiado desde la app se conserva y se avisa en la consola; un jugador cambiado de equipo en la app no se toca. Las estadísticas acumuladas y las jornadas se guardan por separado para conservar los valores del archivo. El Excel no se modifica.
 
 Un trigger en PostgreSQL emite `NOTIFY` al cambiar estadísticas. La API escucha y envía un evento SSE al navegador, que consulta los datos actuales. La conexión se restablece automáticamente, y hay una consulta adicional cada minuto y un botón de actualización manual.
 
@@ -218,11 +218,11 @@ Los cambios usan JSON con `responsible` y, para registros existentes, `version`.
 ## Regenerar la semilla desde el archivo
 
 ```powershell
-python read_workbook.py
+python read_workbook.py "Estadisticas_Softbol_Torneo_Completo vfinal.xlsx"
 python import_data.py
 ```
 
-Esto genera los archivos de importación de jugadores y estadísticas; no reemplaza una base ya importada. La carga desde el navegador actualiza el torneo actual; la gestión de nuevas temporadas permanece pendiente.
+Esto regenera `data/seed.json` con la huella del archivo. Al desplegar, el servidor aplica la versión nueva sobre la base existente como se describe en **Datos y tiempo real**; también se puede cargar desde el navegador con **Carga masiva**. La gestión de nuevas temporadas permanece pendiente.
 
 ## Actualizar el rol y los resultados desde el Excel
 
