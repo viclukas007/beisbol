@@ -108,7 +108,7 @@ app.get(['/api/snapshot','/api/admin/snapshot'], async (req, res) => {
     const visibleGames=isAdmin?games.rows:games.rows.filter(g=>!g.deletedAt);
     const gameIds=new Set(visibleGames.map(g=>g.id));
     const hitTotals=new Map<string,number>();for(const h of gameHits.filter(h=>!h.deletedAt)){const key=`${h.gameId}:${h.teamId}`;hitTotals.set(key,(hitTotals.get(key)??0)+h.hits);}
-    res.json({ source: source.rows[0].filename, metadata, league:{...league,logoUrl:league.hasLogo?`/api/league/logo?v=${league.version}`:'/league-logo.png'}, teams: teams.rows, players:roster, rounds:isAdmin?rounds.rows:rounds.rows.filter(r=>ids.has(r.playerId)), schedule:{source:schedule.rows[0].filename,...schedule.rows[0].metadata},games:visibleGames.map(g=>({...g,homePlayerHits:hitTotals.get(`${g.id}:${g.homeTeamId}`)??null,awayPlayerHits:hitTotals.get(`${g.id}:${g.awayTeamId}`)??null})),gameHits:isAdmin?gameHits:gameHits.filter(h=>!h.deletedAt&&gameIds.has(h.gameId)), updatedAt: new Date().toISOString() });
+    res.json({ source: source.rows[0].filename, metadata, league:{...league,logoUrl:league.hasLogo?`/api/league/logo?v=${league.version}`:await defaultLogo()}, teams: teams.rows, players:roster, rounds:isAdmin?rounds.rows:rounds.rows.filter(r=>ids.has(r.playerId)), schedule:{source:schedule.rows[0].filename,...schedule.rows[0].metadata},games:visibleGames.map(g=>({...g,homePlayerHits:hitTotals.get(`${g.id}:${g.homeTeamId}`)??null,awayPlayerHits:hitTotals.get(`${g.id}:${g.awayTeamId}`)??null})),gameHits:isAdmin?gameHits:gameHits.filter(h=>!h.deletedAt&&gameIds.has(h.gameId)), updatedAt: new Date().toISOString() });
   } catch (error) {
     await client.query('ROLLBACK');
     console.error('Snapshot:', error);
@@ -125,6 +125,14 @@ app.get('/api/events', (req, res) => {
   req.on('close', () => { clearInterval(heartbeat); clients.delete(res); });
 });
 app.use('/api', (_req, res) => { res.status(404).json({ error: 'Ruta no encontrada' }); });
+// Logo oficial incluido en el repositorio; se usa mientras no se cargue otra imagen desde administración.
+// Vite copia public/ a dist/; en la imagen Docker solo existe dist/.
+async function defaultLogo() {
+  for (const candidate of ['dist/league-logo.png', 'public/league-logo.png']) {
+    try { if ((await fs.stat(path.join(root, candidate))).isFile()) return '/league-logo.png'; } catch { /* sin archivo */ }
+  }
+  return null;
+}
 app.use('/ads', express.static(path.join(root, 'public/ads'), { maxAge: 0, etag: true }));
 app.use(express.static(path.join(root, 'dist'), { etag: true }));
 app.get('/{*path}', (_req, res) => { res.sendFile(path.join(root, 'dist/index.html')); });

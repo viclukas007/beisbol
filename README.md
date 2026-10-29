@@ -54,14 +54,14 @@ La base se guarda en el volumen `postgres_data`. Reiniciar o reconstruir la app 
 
 ## Pantallas
 
-- Resumen con cifras acumuladas (hits, home runs y carreras impulsadas) y líderes.
-- Estadísticas de bateo y pitcheo, búsqueda por nombre o equipo, filtro por equipo y jornada, ordenamiento, paginación y exportación CSV. Las tablas aplican siempre el mínimo de participación (promedio de AB del torneo para bateo, 4 IP para pitcheo) y no muestran los espacios de plantilla sin nombre.
-- Los 16 equipos y sus plantillas.
-- Cuadro de honor con Top 5 de HITS, HR, RBI, AVG, K, ERA y W.
-- Fichas individuales con acumulado y jornadas con actividad; cada jornada muestra el rival y el marcador tomados del rol de juegos de esa jornada para el equipo del jugador.
-- Datos del torneo con fuente, metodología y observaciones de importación.
-- Rol de juegos en el menú izquierdo: 240 juegos de Primera y Segunda Vuelta (jornadas 1–16 y 17–31), con filtros por vuelta, equipo y jornada, marcadores y hits/errores por equipo.
-- Tabla de posiciones calculada a partir de partidos finalizados, ordenada con el reglamento de la liga (porcentaje de victorias y criterios de desempate a–d); se puede ver por temporada o por vuelta. La columna Desempate, que explica cada lugar, solo se muestra en administración.
+El menú público tiene cinco secciones; la primera que se abre es la tabla de posiciones. Al abrir la página se muestra durante 5 segundos una pantalla de carga con una pelota de sóftbol en 3D (three.js, `src/Loader.tsx`), que respeta la preferencia de movimiento reducido; no vuelve a aparecer al cambiar de sección.
+
+- **Tabla de posiciones** calculada a partir de partidos finalizados, ordenada con el reglamento de la liga (porcentaje de victorias y criterios de desempate a–d); se puede ver por temporada o por vuelta. La columna Desempate, que explica cada lugar, solo se muestra en administración.
+- **Estadísticas**: arriba el cuadro de honor con Top 5 de HITS, HR, RBI, AVG, K, ERA y W; abajo la tabla completa de bateo y pitcheo con búsqueda por nombre o equipo, filtro por equipo y jornada, ordenamiento, paginación y exportación CSV. Las tablas aplican siempre el mínimo de participación (promedio de AB del torneo para bateo, 4 IP para pitcheo) y no muestran los espacios de plantilla sin nombre.
+- **Equipos**: los 16 equipos y sus plantillas.
+- **Rol de juegos**: 240 juegos de Primera y Segunda Vuelta (jornadas 1–16 y 17–31), con filtros por vuelta, equipo y jornada, marcadores y hits/errores por equipo.
+- **Reglamento del torneo**: criterios de desempate del reglamento, observaciones de la liga, origen de AVG y ERA con sus mínimos, fuente del Excel y estado de la sincronización.
+- Fichas individuales (al tocar un jugador) con acumulado y jornadas con actividad; cada jornada muestra el rival y el marcador tomados del rol de juegos de esa jornada para el equipo del jugador.
 - Hits de cada jugador por partido: consulta y captura únicamente en administración.
 
 ## Backend de administración
@@ -115,7 +115,7 @@ El orden aplica el punto 4 del reglamento de la liga, implementado en `src/stand
 
 Lectura aplicada de “dominio”: el equipo que enfrentó a todos los demás empatados y tiene el mejor porcentaje de victorias frente a ellos. Si dos equipos no se han enfrentado, se pasa a c). Los equipos que quedan empatados tras c) comparten posición y se marcan como volado pendiente; el resultado del volado se registra cuando la liga lo realice. La columna **Desempate** indica el inciso que decidió cada lugar. Con el filtro por vuelta, las carreras anotadas del inciso c) son las de esa vuelta. Los líderes individuales comparten posición por valores idénticos y el Top 5 incluye a quienes empaten con el quinto.
 
-El logo oficial de la liga (Liga de Sóftbol Club Campestre) está incluido en `public/league-logo.png` y se usa mientras no se cargue otra imagen. Para reemplazarlo, en **Liga y reglamento** se admite PNG, JPG o WebP, recomendado 512 × 512 px y hasta 2 MB; la imagen cargada se almacena en PostgreSQL y se conserva al reconstruir Docker o desplegar EasyPanel.
+El logo oficial de la liga (Liga de Sóftbol Club Campestre) se coloca en `public/league-logo.png`: encabeza el menú lateral y la pantalla de carga, y se usa mientras no se cargue otra imagen desde administración. Si el archivo no existe, el menú muestra la marca Diamante. El archivo todavía no está en el repositorio; hay que guardarlo con ese nombre exacto. Para reemplazarlo, en **Liga y reglamento** se admite PNG, JPG o WebP, recomendado 512 × 512 px y hasta 2 MB; la imagen cargada se almacena en PostgreSQL y se conserva al reconstruir Docker o desplegar EasyPanel.
 
 En **Listas de jugadores**, seleccionar equipo y descargar CSV o usar Imprimir / guardar PDF. Se incluyen solo jugadores activos con nombre, condición de socio y espacios de firma y validación. El documento se presenta como lista para validación; la aprobación corresponde a la liga.
 
@@ -172,7 +172,7 @@ El calendario y los resultados se importan de `ROL 2026-2027 LISTO V11.xlsx`: `P
 
 AVG es H / AB (`Bucaneros!K2`). El mínimo de AVG sale de `Top 5 Líderes!O3`, cuyo promedio es `Líderes y Maestra!D2:D353`: 1,412 AB / 352 plazas = 4.01136, equivalente a 5 AB enteros. La app aplica este promedio a los espacios activos actuales, incluidos los espacios sin nombre; las bajas dejan de contar. Al elegir jornada, usa los AB de esa jornada de toda la liga, antes de filtrar por equipo. El mínimo se aplica siempre en las tablas de estadísticas y en los líderes; no es una opción del usuario, porque lo marca la propia estadística.
 
-ERA es (ER × 7) / IP (`Bucaneros!P2`). El mínimo de 4 IP es el valor fijo de `Top 5 Líderes!O5`. Se aplica al acumulado o jornada seleccionado. Las IP se conservan como valores numéricos del Excel; no se convierten automáticamente .1 o .2 en outs. Estas procedencias también se explican en **Datos del torneo**.
+ERA es (ER × 7) / IP (`Bucaneros!P2`). El mínimo de 4 IP es el valor fijo de `Top 5 Líderes!O5`. Se aplica al acumulado o jornada seleccionado. Las IP se conservan como valores numéricos del Excel; no se convierten automáticamente .1 o .2 en outs. Estas procedencias también se explican en **Reglamento del torneo**.
 
 La cifra de Alejandro Millet difiere entre la hoja maestra y Bucaneros; se usa el resumen de Bucaneros. No se deduce una clasificación de equipos a partir de W/L individuales de pitchers.
 

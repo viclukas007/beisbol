@@ -213,5 +213,8 @@ Interpretación registrada de “dominio” para grupos de tres o más: el equip
 - [x] La columna Desempate de la tabla de posiciones es información reservada: solo se muestra en administración.
 - [x] Hits por partido deja de aparecer en el menú público y en la ficha pública del jugador; sigue en administración.
 - [x] Ficha del jugador: columna Rival junto a cada jornada, con el marcador si el juego está finalizado. Se empareja la jornada de estadísticas con la jornada del rol del equipo actual del jugador; si hay cero o más de un juego, se muestra “—” o “Varios”.
-- [x] Logo oficial (Liga de Sóftbol Club Campestre) en `public/league-logo.png` como imagen predeterminada; la cargada desde administración lo reemplaza.
-- [ ] Pendiente de decidir: simplificar el menú público a Tabla de posiciones, Estadísticas (líderes), Equipos y Reglamento.
+- [ ] Logo oficial (Liga de Sóftbol Club Campestre) en `public/league-logo.png` como imagen predeterminada; la cargada desde administración lo reemplaza. La imagen enviada por chat no quedó guardada en disco (se copió por error una captura de pantalla, ya retirada); falta guardar el PNG con ese nombre.
+- [x] Menú público simplificado a cinco secciones: Tabla de posiciones (inicio), Estadísticas (líderes Top 5 + tabla completa), Equipos, Rol de juegos y Reglamento del torneo. Desaparecen Resumen, Líderes y Datos del torneo como pantallas separadas; el reglamento (`src/Regulation.tsx`) se comparte con el pie de la tabla de posiciones.
+- [x] Pantalla de carga con three.js (`src/Loader.tsx`): pelota de sóftbol con costura girando sobre el diamante. Solo al abrir la página, durante 5 segundos como mínimo, para que se vea la animación. El bundle pasa de 332 KB a 815 KB (224 KB gzip) por la librería.
+- [x] Al cambiar de sección se vuelve al inicio de la página.
+- [x] La marca “diamante” del menú lateral se reemplaza por el logo oficial de la liga (también en la pantalla de carga). El nombre de la liga, equipos y temporada siguen al pie del menú.
