@@ -56,7 +56,7 @@ La base se guarda en el volumen `postgres_data`. Reiniciar o reconstruir la app 
 
 El menú público tiene cinco secciones; la primera que se abre es la tabla de posiciones. Al abrir la página se muestra durante 5 segundos una pantalla de carga con una pelota de sóftbol en 3D (three.js, `src/Loader.tsx`), que respeta la preferencia de movimiento reducido; no vuelve a aparecer al cambiar de sección.
 
-- **Tabla de posiciones** calculada a partir de partidos finalizados, ordenada con el reglamento de la liga (porcentaje de victorias y criterios de desempate a–d); se puede ver por temporada o por vuelta. La columna Desempate, que explica cada lugar, solo se muestra en administración.
+- **Tabla de posiciones** calculada a partir de partidos finalizados, ordenada con el reglamento de la liga (porcentaje de victorias y criterios de desempate a–d); se puede ver por temporada o por vuelta. La columna Desempate y el texto de los criterios al pie de la tabla solo se muestran en administración; en la vista pública el reglamento está en su propia sección.
 - **Estadísticas**: arriba el cuadro de honor con Top 5 de HITS, HR, RBI, AVG, K, ERA y W; abajo la tabla completa de bateo y pitcheo con búsqueda por nombre o equipo, filtro por equipo y jornada, ordenamiento, paginación y exportación CSV. Las tablas aplican siempre el mínimo de participación (promedio de AB del torneo para bateo, 4 IP para pitcheo) y no muestran los espacios de plantilla sin nombre.
 - **Equipos**: los 16 equipos y sus plantillas.
 - **Rol de juegos**: 240 juegos de Primera y Segunda Vuelta (jornadas 1–16 y 17–31), con filtros por vuelta, equipo y jornada, marcadores y hits/errores por equipo.

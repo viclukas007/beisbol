@@ -216,7 +216,7 @@ Interpretación registrada de “dominio” para grupos de tres o más: el equip
 
 - [x] Resumen sin la tarjeta de Jugadores; quedan hits, home runs y carreras impulsadas.
 - [x] Las tablas de estadísticas aplican siempre el mínimo de participación (promedio de AB del torneo; 4 IP en pitcheo). Se retiran los checkboxes “Mínimo de N AB” y “Espacios de plantilla”.
-- [x] La columna Desempate de la tabla de posiciones es información reservada: solo se muestra en administración.
+- [x] La columna Desempate de la tabla de posiciones es información reservada: solo se muestra en administración. El bloque “4. Criterios de desempate” al pie de la tabla también se retira de la vista pública; queda en Reglamento del torneo y en la tabla de administración.
 - [x] Hits por partido deja de aparecer en el menú público y en la ficha pública del jugador; sigue en administración.
 - [x] Ficha del jugador: columna Rival junto a cada jornada, con el marcador si el juego está finalizado. Se empareja la jornada de estadísticas con la jornada del rol del equipo actual del jugador; si hay cero o más de un juego, se muestra “—” o “Varios”.
 - [x] Logo oficial (Liga de Sóftbol Club Campestre) en `public/league-logo.png` como imagen predeterminada; la cargada desde administración lo reemplaza. Se recibió como JPG de 1280 × 996 con fondo blanco; se convirtió a PNG de 900 × 700 con el fondo exterior transparente (el blanco de la pelota se conserva).
