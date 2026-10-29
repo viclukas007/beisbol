@@ -54,15 +54,15 @@ La base se guarda en el volumen `postgres_data`. Reiniciar o reconstruir la app 
 
 ## Pantallas
 
-- Resumen con cifras acumuladas y líderes.
-- Estadísticas de bateo y pitcheo, búsqueda por nombre o equipo, filtro por equipo y jornada, mínimos de participación, ordenamiento, paginación y exportación CSV.
+- Resumen con cifras acumuladas (hits, home runs y carreras impulsadas) y líderes.
+- Estadísticas de bateo y pitcheo, búsqueda por nombre o equipo, filtro por equipo y jornada, ordenamiento, paginación y exportación CSV. Las tablas aplican siempre el mínimo de participación (promedio de AB del torneo para bateo, 4 IP para pitcheo) y no muestran los espacios de plantilla sin nombre.
 - Los 16 equipos y sus plantillas.
 - Cuadro de honor con Top 5 de HITS, HR, RBI, AVG, K, ERA y W.
-- Fichas individuales con acumulado y jornadas con actividad.
+- Fichas individuales con acumulado y jornadas con actividad; cada jornada muestra el rival y el marcador tomados del rol de juegos de esa jornada para el equipo del jugador.
 - Datos del torneo con fuente, metodología y observaciones de importación.
 - Rol de juegos en el menú izquierdo: 240 juegos de Primera y Segunda Vuelta (jornadas 1–16 y 17–31), con filtros por vuelta, equipo y jornada, marcadores y hits/errores por equipo.
-- Tabla de posiciones calculada a partir de partidos finalizados, ordenada con el reglamento de la liga (porcentaje de victorias y criterios de desempate a–d) y con la columna Desempate que explica cada lugar; se puede ver por temporada o por vuelta.
-- Hits de cada jugador por partido, accesibles desde el rol y su ficha.
+- Tabla de posiciones calculada a partir de partidos finalizados, ordenada con el reglamento de la liga (porcentaje de victorias y criterios de desempate a–d); se puede ver por temporada o por vuelta. La columna Desempate, que explica cada lugar, solo se muestra en administración.
+- Hits de cada jugador por partido: consulta y captura únicamente en administración.
 
 ## Backend de administración
 
@@ -115,7 +115,7 @@ El orden aplica el punto 4 del reglamento de la liga, implementado en `src/stand
 
 Lectura aplicada de “dominio”: el equipo que enfrentó a todos los demás empatados y tiene el mejor porcentaje de victorias frente a ellos. Si dos equipos no se han enfrentado, se pasa a c). Los equipos que quedan empatados tras c) comparten posición y se marcan como volado pendiente; el resultado del volado se registra cuando la liga lo realice. La columna **Desempate** indica el inciso que decidió cada lugar. Con el filtro por vuelta, las carreras anotadas del inciso c) son las de esa vuelta. Los líderes individuales comparten posición por valores idénticos y el Top 5 incluye a quienes empaten con el quinto.
 
-El espacio para la imagen oficial está preparado en **Liga y reglamento**: PNG, JPG o WebP, recomendado 512 × 512 px y hasta 2 MB. La imagen se almacena en PostgreSQL y se conserva al reconstruir Docker o desplegar EasyPanel.
+El logo oficial de la liga (Liga de Sóftbol Club Campestre) está incluido en `public/league-logo.png` y se usa mientras no se cargue otra imagen. Para reemplazarlo, en **Liga y reglamento** se admite PNG, JPG o WebP, recomendado 512 × 512 px y hasta 2 MB; la imagen cargada se almacena en PostgreSQL y se conserva al reconstruir Docker o desplegar EasyPanel.
 
 En **Listas de jugadores**, seleccionar equipo y descargar CSV o usar Imprimir / guardar PDF. Se incluyen solo jugadores activos con nombre, condición de socio y espacios de firma y validación. El documento se presenta como lista para validación; la aprobación corresponde a la liga.
 
@@ -137,7 +137,7 @@ Los marcadores de la hoja **Captura de Resultados** del Excel se importan al des
 
 ## Hits de cada jugador por partido
 
-En **Hits por partido** o **Rol de juegos → Ver / capturar hits**, elegir un juego finalizado y capturar los hits del jugador. Cada fila se guarda por separado. Cero indica una captura sin hits; un campo vacío retira esa captura y conserva su historial. El equipo de la participación se conserva si posteriormente el jugador cambia de plantilla.
+Esta pantalla es exclusiva de administración; la vista pública no la muestra porque los resultados ya aparecen en el rol. En **Hits por partido** o **Rol de juegos → Ver / capturar hits**, elegir un juego finalizado y capturar los hits del jugador. Cada fila se guarda por separado. Cero indica una captura sin hits; un campo vacío retira esa captura y conserva su historial. El equipo de la participación se conserva si posteriormente el jugador cambia de plantilla.
 
 Los hits por partido complementan el detalle histórico del Excel. No se vuelven a sumar a los acumulados ni jornadas, porque el Excel no vincula cada jornada a un juego específico. Para actualizar los resúmenes y AVG, utilizar los conteos completos en Captura de estadísticas o Carga masiva. Los totales de hits del rol y la tabla son sumas de las capturas por partido y pueden estar incompletos mientras falten jugadores por capturar.
 
@@ -170,7 +170,7 @@ Los datos históricos no se muestran como partidos en curso. Los cambios guardad
 
 El calendario y los resultados se importan de `ROL 2026-2027 LISTO V11.xlsx`: `Primera Vuelta` (120 juegos, jornadas 1–16, del 31 de agosto al 17 de diciembre de 2026), `Segunda Vuelta` (120 juegos, jornadas 17–31, del 11 de enero al 20 de mayo de 2027) y `Captura de Resultados` (marcadores, hits y errores por equipo, códigos `cap`, `ff` y `Susp Luz`). Cada juego conserva la celda de origen (`sourceCell`), que es la clave para actualizar la base sin duplicar juegos. La fecha del juego corresponde a la columna Fecha del Excel; la versión V11 ya no trae las notas con asterisco de la primera importación.
 
-AVG es H / AB (`Bucaneros!K2`). El mínimo de AVG sale de `Top 5 Líderes!O3`, cuyo promedio es `Líderes y Maestra!D2:D353`: 1,412 AB / 352 plazas = 4.01136, equivalente a 5 AB enteros. La app aplica este promedio a los espacios activos actuales, incluidos los espacios sin nombre; las bajas dejan de contar. Al elegir jornada, usa los AB de esa jornada de toda la liga, antes de filtrar por equipo.
+AVG es H / AB (`Bucaneros!K2`). El mínimo de AVG sale de `Top 5 Líderes!O3`, cuyo promedio es `Líderes y Maestra!D2:D353`: 1,412 AB / 352 plazas = 4.01136, equivalente a 5 AB enteros. La app aplica este promedio a los espacios activos actuales, incluidos los espacios sin nombre; las bajas dejan de contar. Al elegir jornada, usa los AB de esa jornada de toda la liga, antes de filtrar por equipo. El mínimo se aplica siempre en las tablas de estadísticas y en los líderes; no es una opción del usuario, porque lo marca la propia estadística.
 
 ERA es (ER × 7) / IP (`Bucaneros!P2`). El mínimo de 4 IP es el valor fijo de `Top 5 Líderes!O5`. Se aplica al acumulado o jornada seleccionado. Las IP se conservan como valores numéricos del Excel; no se convierten automáticamente .1 o .2 en outs. Estas procedencias también se explican en **Datos del torneo**.
 

@@ -108,7 +108,7 @@ app.get(['/api/snapshot','/api/admin/snapshot'], async (req, res) => {
     const visibleGames=isAdmin?games.rows:games.rows.filter(g=>!g.deletedAt);
     const gameIds=new Set(visibleGames.map(g=>g.id));
     const hitTotals=new Map<string,number>();for(const h of gameHits.filter(h=>!h.deletedAt)){const key=`${h.gameId}:${h.teamId}`;hitTotals.set(key,(hitTotals.get(key)??0)+h.hits);}
-    res.json({ source: source.rows[0].filename, metadata, league:{...league,logoUrl:league.hasLogo?`/api/league/logo?v=${league.version}`:null}, teams: teams.rows, players:roster, rounds:isAdmin?rounds.rows:rounds.rows.filter(r=>ids.has(r.playerId)), schedule:{source:schedule.rows[0].filename,...schedule.rows[0].metadata},games:visibleGames.map(g=>({...g,homePlayerHits:hitTotals.get(`${g.id}:${g.homeTeamId}`)??null,awayPlayerHits:hitTotals.get(`${g.id}:${g.awayTeamId}`)??null})),gameHits:isAdmin?gameHits:gameHits.filter(h=>!h.deletedAt&&gameIds.has(h.gameId)), updatedAt: new Date().toISOString() });
+    res.json({ source: source.rows[0].filename, metadata, league:{...league,logoUrl:league.hasLogo?`/api/league/logo?v=${league.version}`:'/league-logo.png'}, teams: teams.rows, players:roster, rounds:isAdmin?rounds.rows:rounds.rows.filter(r=>ids.has(r.playerId)), schedule:{source:schedule.rows[0].filename,...schedule.rows[0].metadata},games:visibleGames.map(g=>({...g,homePlayerHits:hitTotals.get(`${g.id}:${g.homeTeamId}`)??null,awayPlayerHits:hitTotals.get(`${g.id}:${g.awayTeamId}`)??null})),gameHits:isAdmin?gameHits:gameHits.filter(h=>!h.deletedAt&&gameIds.has(h.gameId)), updatedAt: new Date().toISOString() });
   } catch (error) {
     await client.query('ROLLBACK');
     console.error('Snapshot:', error);

@@ -205,3 +205,13 @@ Interpretación registrada de “dominio” para grupos de tres o más: el equip
 - [x] `read_workbook.py` acepta la ruta del archivo; `data/seed.json` regenerado con la huella nueva.
 - [x] `server/stats-sync.ts`: aplica cada versión del libro una sola vez sobre la base existente por ID estable, con historial; conserva nombres editados en la app y avisa.
 - [x] El snapshot toma la última importación registrada como fuente de las estadísticas.
+
+## Ajustes de la vista pública del 29 de octubre de 2026
+
+- [x] Resumen sin la tarjeta de Jugadores; quedan hits, home runs y carreras impulsadas.
+- [x] Las tablas de estadísticas aplican siempre el mínimo de participación (promedio de AB del torneo; 4 IP en pitcheo). Se retiran los checkboxes “Mínimo de N AB” y “Espacios de plantilla”.
+- [x] La columna Desempate de la tabla de posiciones es información reservada: solo se muestra en administración.
+- [x] Hits por partido deja de aparecer en el menú público y en la ficha pública del jugador; sigue en administración.
+- [x] Ficha del jugador: columna Rival junto a cada jornada, con el marcador si el juego está finalizado. Se empareja la jornada de estadísticas con la jornada del rol del equipo actual del jugador; si hay cero o más de un juego, se muestra “—” o “Varios”.
+- [x] Logo oficial (Liga de Sóftbol Club Campestre) en `public/league-logo.png` como imagen predeterminada; la cargada desde administración lo reemplaza.
+- [ ] Pendiente de decidir: simplificar el menú público a Tabla de posiciones, Estadísticas (líderes), Equipos y Reglamento.
