@@ -206,6 +206,11 @@ Interpretación registrada de “dominio” para grupos de tres o más: el equip
 - [x] `server/stats-sync.ts`: aplica cada versión del libro una sola vez sobre la base existente por ID estable, con historial; conserva nombres editados en la app y avisa.
 - [x] El snapshot toma la última importación registrada como fuente de las estadísticas.
 
+## Libro de estadísticas del 29 de octubre de 2026
+
+- [x] `Estadisticas_Softbol_Torneo_Completo vfinal.xlsx` con las 8 jornadas completas: 86 jugadores cambian en la jornada 8; acumulados de 893 → 972 JJ, 2,548 → 2,792 AB, 1,029 → 1,132 hits, 76 → 83 HR, 703 → 776 RBI. Mínimo de AVG: 7.93 → 8 AB. Sin plazas nuevas; en Robins la plaza de Jorge Caballero Córdova aparece ahora como Maximiliano Ríos (mismo ID estable, conserva el historial de esa plaza).
+- [x] `data/seed.json` regenerado con la huella nueva; la versión anterior del libro se conserva localmente como `Estadisticas_Softbol_Torneo_Completo vfinal (2026-10-22).xlsx` (fuera del repositorio).
+
 ## Ajustes de la vista pública del 29 de octubre de 2026
 
 - [x] Resumen sin la tarjeta de Jugadores; quedan hits, home runs y carreras impulsadas.

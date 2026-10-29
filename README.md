@@ -160,7 +160,7 @@ Copiar los MP4 a `public/ads` y recargar la página. La carpeta está montada en
 
 ## Datos y tiempo real
 
-Se importan 339 jugadores con nombre y 13 espacios `Jugador N`, además de 10,560 filas de jornadas. La versión del 22 de octubre de 2026 del libro de estadísticas tiene actividad en las jornadas 1–8. La semilla completa está en `data/seed.json`; el informe está en `data/import-report.json`.
+Se importan 339 jugadores con nombre y 13 espacios `Jugador N`, además de 10,560 filas de jornadas. La versión del 29 de octubre de 2026 del libro de estadísticas tiene las jornadas 1–8 completas (972 JJ, 2,792 AB y 1,132 hits acumulados). La semilla completa está en `data/seed.json`; el informe está en `data/import-report.json`.
 
 El servidor importa la semilla completa en una transacción cuando la base está vacía. Cuando la base ya existe y `data/seed.json` lleva una huella SHA-256 nueva, aplica esa versión del libro una sola vez (`server/stats-sync.ts`): identifica a cada jugador por su ID estable (equipo × 100 + fila de la plantilla), reemplaza acumulados y jornadas con los valores del Excel, da nombre a los espacios que la liga haya ocupado y crea los jugadores nuevos. Un nombre cambiado desde la app se conserva y se avisa en la consola; un jugador cambiado de equipo en la app no se toca. Las estadísticas acumuladas y las jornadas se guardan por separado para conservar los valores del archivo. El Excel no se modifica.
 
