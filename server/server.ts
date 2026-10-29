@@ -105,6 +105,8 @@ app.get(['/api/snapshot','/api/admin/snapshot'], async (req, res) => {
     const roster=isAdmin?players.rows:activePlayers.map(p=>({...p,member:null}));
     const ids=new Set(roster.map(p=>p.id));
     metadata.minimumAb=activePlayers.reduce((sum,p)=>sum+p.stats.ab,0)/Math.max(activePlayers.length,1);
+    const pitchers=activePlayers.filter(p=>p.stats.ip>0);
+    metadata.minimumIp=pitchers.reduce((sum,p)=>sum+p.stats.ip,0)/Math.max(pitchers.length,1);
     const visibleGames=isAdmin?games.rows:games.rows.filter(g=>!g.deletedAt);
     const gameIds=new Set(visibleGames.map(g=>g.id));
     const hitTotals=new Map<string,number>();for(const h of gameHits.filter(h=>!h.deletedAt)){const key=`${h.gameId}:${h.teamId}`;hitTotals.set(key,(hitTotals.get(key)??0)+h.hits);}

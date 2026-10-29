@@ -44,7 +44,7 @@ for idx, sheet in enumerate(source['sheets'][2:]):
             rounds.append({'playerId': player_id, 'round': current_round, 'stats': stats(cells), 'sourceCell': origin})
 
 qualified_ab = sum(p['stats']['ab'] for p in players) / len(players)
-report = {'teams': len(teams), 'rosterSlots': len(players), 'namedPlayers': sum(not p['placeholder'] for p in players), 'placeholderSlots': sum(p['placeholder'] for p in players), 'roundRows': len(rounds), 'roundsWithActivity': sorted({r['round'] for r in rounds if any(r['stats'][k] for k in ['jj', 'ab', 'ip'])}), 'masterDifferences': differences, 'minimumAb': qualified_ab, 'minimumIp': 4, 'eraInnings': 7}
+report = {'teams': len(teams), 'rosterSlots': len(players), 'namedPlayers': sum(not p['placeholder'] for p in players), 'placeholderSlots': sum(p['placeholder'] for p in players), 'roundRows': len(rounds), 'roundsWithActivity': sorted({r['round'] for r in rounds if any(r['stats'][k] for k in ['jj', 'ab', 'ip'])}), 'masterDifferences': differences, 'minimumAb': qualified_ab, 'minimumIp': (lambda ip: sum(ip) / len(ip) if ip else 0)([p['stats']['ip'] for p in players if p['stats']['ip'] > 0]), 'eraInnings': 7}
 seed = {'source': source['source'], 'sha256': hashlib.sha256((base / source['source']).read_bytes()).hexdigest(), 'metadata': report, 'teams': teams, 'players': players, 'rounds': rounds}
 (base / 'data').mkdir(exist_ok=True)
 (base / 'data' / 'seed.json').write_text(json.dumps(seed, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
