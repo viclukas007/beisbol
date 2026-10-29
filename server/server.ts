@@ -96,7 +96,7 @@ app.get(['/api/snapshot','/api/admin/snapshot'], async (req, res) => {
     const schedule = await client.query('SELECT filename,metadata FROM schedule_imports ORDER BY id DESC LIMIT 1');
     const games = await client.query(`SELECT ${gameColumns} FROM games ORDER BY date,time,id`);
     const gameHits = (await client.query(`SELECT h.game_id AS "gameId",h.player_id AS "playerId",p.name,h.team_id AS "teamId",h.hits,h.version,h.deleted_at AS "deletedAt" FROM game_player_hits h JOIN players p ON p.id=h.player_id ORDER BY h.game_id,h.player_id`)).rows;
-    const league = (await client.query(`SELECT name,logo_version AS version,logo IS NOT NULL AS "hasLogo",rules_notes AS "rulesNotes" FROM league_settings WHERE id=1`)).rows[0];
+    const league = (await client.query(`SELECT name,logo_version AS version,logo IS NOT NULL AS "hasLogo",rules_notes AS "rulesNotes",standings_order AS "standingsOrder" FROM league_settings WHERE id=1`)).rows[0];
     await client.query('COMMIT');
     res.set('Cache-Control', 'no-store');
     const activePlayers=players.rows.filter(p=>p.active);

@@ -135,6 +135,8 @@ INSERT INTO league_settings(id,name) VALUES(1,'Liga de Sóftbol Nocturna Varonil
 ALTER TABLE league_settings ADD COLUMN IF NOT EXISTS standings_criteria jsonb NOT NULL DEFAULT '[]';
 ALTER TABLE league_settings ADD COLUMN IF NOT EXISTS rules_confirmed boolean NOT NULL DEFAULT false;
 ALTER TABLE league_settings ADD COLUMN IF NOT EXISTS rules_notes text NOT NULL DEFAULT '';
+-- Orden manual de la tabla de posiciones por alcance ('all', '1', '2'): lista de IDs de equipo; vacío = orden automático.
+ALTER TABLE league_settings ADD COLUMN IF NOT EXISTS standings_order jsonb NOT NULL DEFAULT '{}';
 CREATE TABLE IF NOT EXISTS game_player_hits (
   game_id integer NOT NULL REFERENCES games(id), player_id integer NOT NULL REFERENCES players(id),
   team_id integer NOT NULL REFERENCES teams(id), hits integer NOT NULL CHECK(hits BETWEEN 0 AND 9999),

@@ -56,7 +56,7 @@ La base se guarda en el volumen `postgres_data`. Reiniciar o reconstruir la app 
 
 El menú público tiene cinco secciones; la primera que se abre es la tabla de posiciones. Al abrir la página se muestra durante 5 segundos una pantalla de carga con una pelota de sóftbol en 3D (three.js, `src/Loader.tsx`), que respeta la preferencia de movimiento reducido; no vuelve a aparecer al cambiar de sección.
 
-- **Tabla de posiciones** calculada a partir de partidos finalizados, ordenada con el reglamento de la liga (porcentaje de victorias y criterios de desempate a–d); se puede ver por temporada o por vuelta. La columna H (hits por equipo), la columna Desempate y el texto de los criterios al pie de la tabla solo se muestran en administración.
+- **Tabla de posiciones** calculada a partir de partidos finalizados, ordenada con el reglamento de la liga (porcentaje de victorias y criterios de desempate a–d); se puede ver por temporada o por vuelta. La columna H (hits por equipo), la columna Desempate y el texto de los criterios al pie de la tabla solo se muestran en administración. Si la liga fijó un orden manual desde administración, la tabla lo muestra con la nota “Orden definido por la liga”.
 - **Estadísticas**: arriba el cuadro de honor con Top 5 de HITS, HR, RBI, AVG, K, ERA y W; abajo la tabla completa de bateo y pitcheo con búsqueda por nombre o equipo, filtro por equipo y jornada, ordenamiento, paginación y exportación CSV. Las tablas aplican siempre el mínimo de participación (promedio de AB del torneo para bateo, promedio de IP de quienes han lanzado para pitcheo) y no muestran los espacios de plantilla sin nombre.
 - **Equipos**: los 16 equipos y sus plantillas.
 - **Rol de juegos**: 240 juegos de Primera y Segunda Vuelta (jornadas 1–16 y 17–31), con filtros por vuelta, equipo y jornada, marcadores y hits/errores por equipo.
@@ -74,7 +74,8 @@ En `/admin`:
 - **Historial:** responsable, fecha y valores antes/después de los movimientos.
 - **Carga masiva:** jugadores y estadísticas en CSV/XLSX, plantillas con datos actuales, errores por fila, vista previa y aplicación conjunta.
 - **Listas de jugadores:** plantilla activa por equipo, condición de socio y espacios de firma; descargar CSV o imprimir/guardar PDF.
-- **Liga y reglamento:** cargar la imagen oficial, editar el nombre y las observaciones que se muestran bajo la tabla de posiciones. El orden de la tabla aplica el reglamento aprobado y no se configura desde la pantalla.
+- **Liga y reglamento:** cargar la imagen oficial, editar el nombre y las observaciones que se muestran en Reglamento del torneo.
+- **Tabla de posiciones (orden manual):** la tabla de administración muestra flechas ↑/↓ en cada equipo. El primer movimiento fija el orden visible como orden manual de ese alcance (temporada, primera o segunda vuelta) y a partir de ahí la tabla pública lo respeta aunque lleguen nuevos resultados; el botón **Volver al orden automático** restablece el reglamento. Es un respaldo para cuando el criterio automático no aplique (por ejemplo, tras un volado). Cada cambio queda en el historial.
 - **Hits por partido:** capturar los hits de cada jugador de un partido finalizado.
 
 La captura por jornada aplica únicamente la diferencia contra la versión anterior al acumulado, conservando los ajustes históricos importados. Un guardado sin cambios no suma estadísticas de nuevo. La corrección directa del acumulado conserva los registros de jornadas. Las versiones evitan sobrescribir cambios de otra ventana.
@@ -211,6 +212,7 @@ Vite abre el frontend en el puerto 5173 y redirige `/api` a la app de Docker en 
 - `GET /api/admin/roster.csv`: lista de jugadores activos para el equipo seleccionado.
 - `PUT /api/admin/league/settings`: nombre de la liga y observaciones del reglamento.
 - `PUT /api/admin/league/logo`: imagen oficial; `GET /api/league/logo` la sirve públicamente.
+- `PUT /api/admin/league/standings-order`: orden manual de la tabla de posiciones (`scope` `all`, `1` o `2`; `order` con los 16 IDs de equipo o `null` para volver al automático; `version` de la liga).
 - `PUT /api/games/:gameId/players/:playerId/hits`: capturar o retirar hits individuales, con `version` y `gameVersion`.
 
 Los cambios usan JSON con `responsible` y, para registros existentes, `version`. En jugadores, enviar `rosterVersion` del snapshot como `version` al modificar la plantilla; la versión de estadísticas es independiente. Los conflictos devuelven HTTP 409.

@@ -20,3 +20,9 @@
 .score-detail{display:block;font-size:10.5px;color:#6b786c;margin-top:5px;white-space:nowrap;font-variant-numeric:tabular-nums}
 .admin-notice .rules-list{color:inherit}
 @media(max-width:700px){.standings-reason{max-width:200px}}
+.order-buttons{display:inline-flex;gap:2px;vertical-align:middle;margin-left:6px}
+.order-buttons .icon-button{padding:2px;color:#527246}
+.order-buttons .icon-button:disabled{opacity:.3}
+.standings-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.standings-table td:nth-child(2){text-align:left}
+.standings-table .schedule-team{border-left:0;padding-left:0;font-size:14px;color:#24352f;letter-spacing:-.01em}

@@ -103,3 +103,10 @@ export function rankStandings(rows:StandingsRow[],games:Game[]):RankedRow[] {
   }
   return ranked;
 }
+// Orden manual fijado por la liga: los equipos listados van primero en ese orden; los que falten conservan su orden automático al final.
+export function applyManualOrder(ranked:RankedRow[],order:number[]|undefined):RankedRow[] {
+  if(!order||!order.length)return ranked;
+  const index=new Map(order.map((id,i)=>[id,i]));
+  const rows=[...ranked].sort((a,b)=>(index.get(a.team.id)??order.length+a.position)-(index.get(b.team.id)??order.length+b.position));
+  return rows.map((row,i)=>({...row,position:i+1,shared:false,reason:'Orden manual de la liga'}));
+}

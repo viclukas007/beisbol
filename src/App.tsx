@@ -168,7 +168,7 @@ export default function App() {
     {page==='Rol de juegos'&&<Schedule key={admin?'admin':'public'} data={data} reload={load} editable={admin}/>}
     {admin&&page==='Captura de estadísticas'&&<Capture data={data} reload={load} onDirty={setDirty}/>}
     {admin&&page==='Plantillas'&&<Roster data={data} reload={load}/>}
-    {page==='Tabla de posiciones'&&<Standings data={data} detailed={admin}/>}
+    {page==='Tabla de posiciones'&&<Standings data={data} detailed={admin} reload={load}/>}
     {admin&&page==='Hits por partido'&&<GameHits data={data} reload={load} editable={admin} onDirty={setDirty}/>}
     {admin&&page==='Carga masiva'&&<BulkImport data={data} reload={load}/>}
     {admin&&page==='Listas de jugadores'&&<OfficialRoster data={data}/>}

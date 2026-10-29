@@ -30,6 +30,24 @@ export function registerLeague(app:Express,pool:Pool) {
       await audit(c,'league','1','rules_update',before,after,res.locals.auth.email);
     });res.json({ok:true});
   });
+  // Orden manual de la tabla de posiciones: respaldo cuando el criterio automático no aplique. null vuelve al orden automático.
+  app.put('/api/admin/league/standings-order',async(req,res)=>{
+    const {scope,order,version}=req.body??{};
+    if(!['all','1','2'].includes(scope))throw new InputError('Indica el alcance: temporada, primera o segunda vuelta.');
+    if(order!==null&&!(Array.isArray(order)&&order.every(id=>Number.isInteger(id))))throw new InputError('El orden debe ser una lista de equipos.');
+    await transaction(pool,async c=>{
+      const before=(await c.query('SELECT standings_order,logo_version FROM league_settings WHERE id=1 FOR UPDATE')).rows[0];
+      if(before.logo_version!==version)throw new InputError('La configuración cambió. Actualiza y vuelve a intentar.',409);
+      if(order!==null) {
+        const teams=(await c.query('SELECT id FROM teams ORDER BY id')).rows.map(row=>row.id as number);
+        if(order.length!==teams.length||new Set(order).size!==order.length||!order.every(id=>teams.includes(id)))throw new InputError('El orden debe incluir a los 16 equipos una sola vez.');
+      }
+      const next={...before.standings_order};
+      if(order===null)delete next[scope];else next[scope]=order;
+      await c.query('UPDATE league_settings SET standings_order=$1,logo_version=logo_version+1,updated_at=now() WHERE id=1',[JSON.stringify(next)]);
+      await audit(c,'league','1','standings_order',{scope,order:before.standings_order[scope]??null},{scope,order},res.locals.auth.email);
+    });res.json({ok:true});
+  });
   app.put('/api/admin/league/logo',async(req,res)=>{
     const {dataBase64,version}=req.body??{};
     if(typeof dataBase64!=='string'||dataBase64.length>2800000||!/^[A-Za-z0-9+/]*={0,2}$/.test(dataBase64))throw new InputError('La imagen admite hasta 2 MB.');
