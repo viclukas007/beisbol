@@ -210,6 +210,7 @@ Interpretación registrada de “dominio” para grupos de tres o más: el equip
 
 - [x] `Estadisticas_Softbol_Torneo_Completo vfinal.xlsx` con las 8 jornadas completas: 86 jugadores cambian en la jornada 8; acumulados de 893 → 972 JJ, 2,548 → 2,792 AB, 1,029 → 1,132 hits, 76 → 83 HR, 703 → 776 RBI. Mínimo de AVG: 7.93 → 8 AB. Sin plazas nuevas; en Robins la plaza de Jorge Caballero Córdova aparece ahora como Maximiliano Ríos (mismo ID estable, conserva el historial de esa plaza).
 - [x] `data/seed.json` regenerado con la huella nueva; la versión anterior del libro se conserva localmente como `Estadisticas_Softbol_Torneo_Completo vfinal (2026-10-22).xlsx` (fuera del repositorio).
+- [x] `ROL 2026-2027 LISTO V11.xlsx` del 29 de octubre: mismo calendario (240 juegos, sin cambios de fechas ni equipos) y 8 marcadores nuevos en `Captura de Resultados`: los 4 de la jornada 8 (21 y 22 de octubre, con código `cap`) y los 4 de la jornada 9 (26 y 27 de octubre, con marcador y sin código). Pasa de 41 a 49 juegos finalizados; siguen 1 forfeit y 2 suspendidos por luz. `data/schedule.json` regenerado; la versión anterior se conserva como `ROL 2026-2027 LISTO V11 (2026-10-22).xlsx`.
 
 ## Ajustes de la vista pública del 29 de octubre de 2026
 
