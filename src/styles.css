@@ -14,3 +14,4 @@
 .loader-canvas canvas{width:100%!important;height:100%!important;display:block}
 .brand-logo{display:block;width:100%;max-width:168px;height:auto;margin:0 auto}
 .loader-logo{width:min(220px,60vw);height:auto;margin-top:4px}
+.below-minimum{color:#aab4a6;font-style:italic}

@@ -215,7 +215,7 @@ Interpretación registrada de “dominio” para grupos de tres o más: el equip
 ## Ajustes de la vista pública del 29 de octubre de 2026
 
 - [x] Resumen sin la tarjeta de Jugadores; quedan hits, home runs y carreras impulsadas.
-- [x] Las tablas de estadísticas aplican siempre el mínimo de participación (promedio de AB del torneo; 4 IP en pitcheo). Se retiran los checkboxes “Mínimo de N AB” y “Espacios de plantilla”.
+- [x] Se retiran los checkboxes “Mínimo de N AB” y “Espacios de plantilla”. Primero la tabla ocultaba a quien no alcanzaba el mínimo; al entrar a un equipo solo salían 9 de sus jugadores, así que ahora la tabla muestra a todos y el mínimo solo decide el orden por AVG/ERA (los que no lo alcanzan van después, con el valor atenuado) y quién compite en los líderes.
 - [x] La columna Desempate de la tabla de posiciones es información reservada: solo se muestra en administración. El bloque “4. Criterios de desempate” se retira por completo de la vista pública (tabla de posiciones y Reglamento del torneo); queda únicamente en la tabla de posiciones de administración. Reglamento del torneo conserva las observaciones de la liga, el origen de AVG/ERA y la fuente.
 - [x] Las columnas H y ERR (hits y errores por equipo de la hoja de resultados) se retiran de la tabla de posiciones pública; quedan en administración.
 - [x] Mínimo de ERA dinámico: promedio de IP entre los jugadores que han lanzado (IP > 0), en lugar del valor fijo de 4 IP de `Top 5 Líderes!O5`, porque no todos los jugadores son pitchers. Se aplica en tablas, líderes y textos explicativos; el servidor y `import_data.py` lo calculan con la misma regla. El mínimo de AVG se confirma como promedio de AB de todas las plazas activas, redondeado hacia arriba.
