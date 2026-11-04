@@ -10,6 +10,7 @@ import OfficialRoster from './OfficialRoster';
 import LeagueSettings from './LeagueSettings';
 import Standings from './Standings';
 import StatisticsRules from './StatisticsRules';
+import { teamLogo } from './teams';
 import Loader from './Loader';
 import GameHits from './GameHits';
 import {Login,PasswordSettings} from './Account';
@@ -29,7 +30,10 @@ const normalize = (text: string) => text.normalize('NFD').replace(/[\u0300-\u036
 const titleName = (text: string) => text.toLocaleLowerCase('es-MX').replace(/(^|\s)(\p{L})/gu, (_, space, letter) => space + letter.toLocaleUpperCase('es-MX'));
 const initials = (text: string) => text.split(/\s+/).slice(0, 2).map(s => s[0]).join('');
 const format = (value: number, key?: string) => key === 'avg' ? value.toFixed(3).replace(/^0/, '') : key === 'era' ? value.toFixed(2) : new Intl.NumberFormat('es-MX', { maximumFractionDigits: 2 }).format(value);
-function Badge({ team, small = false }: { team: Team; small?: boolean }) { return <span className={`team-badge ${small ? 'small' : ''}`} style={{ '--team': team.color } as React.CSSProperties}>{team.name === 'NorthSide' ? 'NS' : team.name.slice(0, 2).toUpperCase()}</span>; }
+function Badge({ team, small = false }: { team: Team; small?: boolean }) {
+  const [logo, setLogo] = useState(true);
+  return <span className={`team-badge ${small ? 'small' : ''} ${logo ? 'has-logo' : ''}`} style={{ '--team': team.color } as React.CSSProperties}>{logo ? <img src={teamLogo(team.id)} alt={team.name} onError={() => setLogo(false)}/> : team.name === 'NorthSide' ? 'NS' : team.name.slice(0, 2).toUpperCase()}</span>;
+}
 
 export default function App() {
   const [data, setData] = useState<Snapshot | null>(null);

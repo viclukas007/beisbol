@@ -15,3 +15,10 @@
 .brand-logo{display:block;width:100%;max-width:168px;height:auto;margin:0 auto}
 .loader-logo{width:min(220px,60vw);height:auto;margin-top:4px}
 .below-minimum{color:#aab4a6;font-style:italic}
+.team-badge.has-logo{background:#fff;padding:0;overflow:hidden;border:1px solid #e3e8df}
+.team-badge.has-logo img{width:100%;height:100%;object-fit:cover;display:block}
+.team-cell{display:flex;align-items:center;gap:10px}
+.team-logo{width:30px;height:30px;border-radius:50%;object-fit:cover;flex:none;border:1px solid #e3e8df;background:#fff}
+.team-logo.small{width:20px;height:20px;vertical-align:middle;margin-right:6px}
+.team-badge.has-logo{clip-path:none;border-radius:12px;padding-bottom:0}
+.team-badge.small.has-logo{border-radius:8px}
