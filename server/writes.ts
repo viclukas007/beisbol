@@ -49,6 +49,11 @@ export async function transaction<T>(pool: Pool, action: (c: PoolClient) => Prom
   catch (error) { await c.query('ROLLBACK'); throw error; }
   finally { c.release(); }
 }
+// Cada jugador tiene una fila de estadísticas por jornada. Se crean las que falten hasta la última jornada del rol (mínimo 30).
+export async function ensureRoundRows(c: PoolClient) {
+  const stats = JSON.stringify(Object.fromEntries([...counts,'avg','era'].map(key => [key,0])));
+  await c.query(`INSERT INTO round_stats(player_id,round,stats,source_cell) SELECT p.id,r,$1::jsonb,'Jornada del rol' FROM players p CROSS JOIN generate_series(1,(SELECT GREATEST(30,COALESCE(max(round),0)) FROM games WHERE deleted_at IS NULL)) AS r WHERE NOT EXISTS (SELECT 1 FROM round_stats s WHERE s.player_id=p.id AND s.round=r) ON CONFLICT (player_id,round) DO NOTHING`, [stats]);
+}
 export const gameColumns = `id,turn,round,to_char(date,'YYYY-MM-DD') AS date,to_char(time,'HH24:MI') AS time,home_team_id AS "homeTeamId",away_team_id AS "awayTeamId",home_score AS "homeScore",away_score AS "awayScore",home_hits AS "homeHits",away_hits AS "awayHits",home_errors AS "homeErrors",away_errors AS "awayErrors",notes,status,source_cell AS "sourceCell",deleted_at AS "deletedAt",updated_at AS "updatedAt",version`;
 const rosterColumns = `id,name,team_id AS "teamId",member,active,version`;
 async function rosterValue(c:PoolClient,body:any) {
@@ -94,6 +99,7 @@ export function registerWrites(app: Express, pool: Pool) {
       const stats=Object.fromEntries([...counts,'avg','era'].map(k=>[k,0]));
       await c.query('INSERT INTO player_stats(player_id,stats) VALUES($1,$2)',[saved.id,stats]);
       await c.query(`INSERT INTO round_stats(player_id,round,stats,source_cell) SELECT $1,generate_series(1,30),$2::jsonb,'Captura manual'`,[saved.id,JSON.stringify(stats)]);
+      await ensureRoundRows(c);
       await audit(c,'player',String(saved.id),'create',null,saved,responsible);
       return saved;
     });
@@ -143,7 +149,7 @@ export function registerWrites(app: Express, pool: Pool) {
   });
   app.put('/api/players/:id/rounds/:round', async (req, res) => {
     const id = integer(Number(req.params.id), 'Jugador');
-    const round = integer(Number(req.params.round), 'Jornada',30);
+    const round = integer(Number(req.params.round), 'Jornada',40);
     const responsible = actor(req.body);
     const result = await transaction(pool, async c => {
       // Todas las capturas de un jugador se serializan antes de aplicar diferencias.
@@ -174,6 +180,7 @@ export function registerWrites(app: Express, pool: Pool) {
       const values = await gameValue(c,req.body);
       const saved = (await c.query(`INSERT INTO games(turn,round,date,time,home_team_id,away_team_id,notes,status,home_score,away_score,home_hits,away_hits,home_errors,away_errors) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING ${gameColumns}`,values)).rows[0];
       await audit(c,'game',String(saved.id),'create',null,saved,responsible);
+      await ensureRoundRows(c);
       return saved;
     });
     res.status(201).json(game);
@@ -190,6 +197,7 @@ export function registerWrites(app: Express, pool: Pool) {
       if((old.homeTeamId!==req.body.homeTeamId||old.awayTeamId!==req.body.awayTeamId||req.body.status!=='completed')&&(await c.query('SELECT 1 FROM game_player_hits WHERE game_id=$1 AND deleted_at IS NULL LIMIT 1',[id])).rowCount)throw new InputError('Retira las capturas de hits antes de cambiar los equipos o reabrir el juego.',409);
       const next = (await c.query(`UPDATE games SET turn=$1,round=$2,date=$3,time=$4,home_team_id=$5,away_team_id=$6,notes=$7,status=$8,home_score=$9,away_score=$10,home_hits=$11,away_hits=$12,home_errors=$13,away_errors=$14,version=version+1 WHERE id=$15 RETURNING ${gameColumns}`,[...values,id])).rows[0];
       await audit(c,'game',String(id),'update',old,next,responsible);
+      await ensureRoundRows(c);
       return next;
     });
     res.json(saved);
@@ -206,6 +214,7 @@ export function registerWrites(app: Express, pool: Pool) {
         if (Boolean(old.deletedAt) === !restore) return old;
         const next = (await c.query(`UPDATE games SET deleted_at=${restore ? 'NULL' : 'now()'},version=version+1 WHERE id=$1 RETURNING ${gameColumns}`,[id])).rows[0];
         await audit(c,'game',String(id),restore?'restore':'remove',old,next,responsible);
+        if (restore) await ensureRoundRows(c);
         return next;
       });
       res.json(saved);

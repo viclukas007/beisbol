@@ -147,3 +147,6 @@ DROP TRIGGER IF EXISTS game_hits_notify ON game_player_hits;
 CREATE TRIGGER game_hits_notify AFTER INSERT OR UPDATE OR DELETE ON game_player_hits FOR EACH STATEMENT EXECUTE FUNCTION notify_stats_changed();
 DROP TRIGGER IF EXISTS league_notify ON league_settings;
 CREATE TRIGGER league_notify AFTER UPDATE ON league_settings FOR EACH STATEMENT EXECUTE FUNCTION notify_stats_changed();
+-- Las estadísticas admiten las mismas jornadas que el rol (hasta 40). El límite anterior era 30 y el rol tiene 31.
+ALTER TABLE round_stats DROP CONSTRAINT IF EXISTS round_stats_round_check;
+ALTER TABLE round_stats ADD CONSTRAINT round_stats_round_check CHECK (round BETWEEN 1 AND 40);

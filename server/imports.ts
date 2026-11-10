@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import {Worker} from 'node:worker_threads';
 import type {Express} from 'express';
 import type {Pool} from 'pg';
-import {InputError,counts,validateStats,rates,same,audit,transaction} from './writes.ts';
+import {InputError,counts,validateStats,rates,same,audit,transaction,ensureRoundRows} from './writes.ts';
 const normalize=(v:unknown)=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase().replace(/\s+/g,' ');
 const emptyStats=()=>Object.fromEntries([...counts,'avg','era'].map(key=>[key,0]));
 function number(value:any,label:string) {
@@ -76,7 +76,7 @@ export function registerImports(app:Express,pool:Pool) {
             if(!existing.active)throw new InputError('El jugador está de baja. Restáuralo antes de cargar estadísticas.');
             const accumulated=scope==='accumulated';
             const round=accumulated?null:number(record.round,'Jornada');
-            if(round!==null&&(!Number.isInteger(round)||round<1||round>30))throw new InputError('La jornada debe estar entre 1 y 30.');
+            if(round!==null&&(!Number.isInteger(round)||round<1||round>40))throw new InputError('La jornada debe estar entre 1 y 40.');
             if(accumulated&&record.round!==undefined&&String(record.round).trim()!==''&&!['acumulado','all','0'].includes(normalize(record.round)))throw new InputError('Esta carga es de acumulados. Selecciona Jornadas para registros con jornada.');
             const key=`${existing.id}:${round??'all'}`;if(seen.has(key))throw new InputError('Registro del jugador y jornada repetido.');seen.add(key);
             const mode=accumulated?'accumulated':'rounds';if(playerModes.has(existing.id)&&playerModes.get(existing.id)!==mode)throw new InputError('No mezcles acumulados y jornadas de un jugador en la misma carga.');playerModes.set(existing.id,mode);
@@ -149,6 +149,7 @@ export function registerImports(app:Express,pool:Pool) {
           }result.updated++;
         }
       }
+      if(result.created)await ensureRoundRows(c);
       await c.query("UPDATE import_batches SET status='applied',result=$2,applied_at=now() WHERE id=$1",[batch.id,result]);
       await audit(c,'import',batch.id,'bulk_apply',null,{filename:batch.filename,kind:batch.kind,...result},responsible);
       return result;

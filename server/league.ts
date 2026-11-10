@@ -74,7 +74,7 @@ export function registerLeague(app:Express,pool:Pool) {
       csv(res,'plantilla-jugadores.csv',[['ID_JUGADOR','EQUIPO','NOMBRE','SOCIO','ACTIVO'],...(blank?[]:players.map(p=>[p.id,p.team,p.name,p.member===null?'':p.member?'Sí':'No',p.active?'Sí':'No']))]);return;
     }
     const round=req.query.round===undefined||req.query.round==='all'?null:Number(req.query.round);
-    if(round!==null&&(!Number.isInteger(round)||round<1||round>30))throw new InputError('Jornada no válida.');
+    if(round!==null&&(!Number.isInteger(round)||round<1||round>40))throw new InputError('Jornada no válida.');
     const rows=(await pool.query('SELECT player_id,stats FROM round_stats WHERE round=$1',[round])).rows;
     const rounds=new Map(rows.map(row=>[row.player_id,row.stats]));
     const names={hits:'H',singles:'1B',doubles:'2B',triples:'3B'};

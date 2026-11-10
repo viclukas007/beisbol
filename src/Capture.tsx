@@ -3,6 +3,7 @@ import {Save,RotateCw,Search,Users} from 'lucide-react';
 import type {Snapshot,Stats} from './types';
 import {write} from './api';
 import History from './History';
+import {statRounds} from './rounds';
 
 const fields=[
   ['jj','JJ','Juegos jugados'],['ab','AB','Turnos al bat'],['hits','H','Hits'],
@@ -49,7 +50,6 @@ export default function Capture({data,reload,onDirty}:{data:Snapshot;reload:()=>
   const [busy,setBusy]=useState<number|null>(null);
   const [errors,setErrors]=useState<Record<number,string>>({});
   const [message,setMessage]=useState('');
-  const [responsible,setResponsible]=useState(()=>localStorage.getItem('diamante-responsible')||'Captura local');
   const dirtyCount=Object.keys(drafts).length;
 
   useEffect(()=>{onDirty(dirtyCount>0);return()=>onDirty(false);},[dirtyCount,onDirty]);
@@ -101,9 +101,8 @@ export default function Capture({data,reload,onDirty}:{data:Snapshot;reload:()=>
     setBusy(id);setMessage('');
     try {
       const stats=Object.fromEntries(fields.map(([key])=>[key,Number(draft.values[key])])) as Stats;
-      const result=await write<RecordValue>(`/api/players/${id}/${scope==='all'?'stats':`rounds/${scope}`}`,'PUT',{stats,version:draft.version,responsible});
+      const result=await write<RecordValue>(`/api/players/${id}/${scope==='all'?'stats':`rounds/${scope}`}`,'PUT',{stats,version:draft.version});
       setSaved(previous=>({...previous,[`${scope}:${id}`]:result}));
-      localStorage.setItem('diamante-responsible',responsible);
       await reload();
       setDrafts(previous=>{const next={...previous};delete next[id];return next;});
       setErrors(previous=>{const next={...previous};delete next[id];return next;});
@@ -118,7 +117,7 @@ export default function Capture({data,reload,onDirty}:{data:Snapshot;reload:()=>
       <div className="panel-body capture-grid-tools">
         <div className="form-grid">
           <label>Equipo<select value={team} onChange={e=>setTeam(e.target.value)}><option value="all">Todos los equipos</option>{data.teams.map(t=><option key={t.id} value={t.id}>{t.name}</option>)}</select></label>
-          <label>Registro<select disabled={busy!==null} value={scope} onChange={e=>changeScope(e.target.value)}><option value="all">Corregir acumulado</option>{Array.from({length:30},(_,i)=><option key={i+1} value={i+1}>Jornada {i+1}</option>)}</select></label>
+          <label>Registro<select disabled={busy!==null} value={scope} onChange={e=>changeScope(e.target.value)}><option value="all">Corregir acumulado</option>{statRounds(data).map(r=><option key={r} value={r}>Jornada {r}</option>)}</select></label>
           <label>Buscar jugador o equipo<div className="capture-search"><Search size={15}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Nombre o equipo"/></div></label>
           <label>Mostrar<select value={pageSize} onChange={e=>setPageSize(e.target.value)}><option value="all">Todos los jugadores</option><option value="25">25 por página</option><option value="50">50 por página</option><option value="100">100 por página</option></select></label>
         </div>
@@ -146,7 +145,7 @@ export default function Capture({data,reload,onDirty}:{data:Snapshot;reload:()=>
         })}</tbody>
       </table>{!rows.length&&<div className="admin-empty">No hay jugadores con estos filtros. Cambia el equipo o la búsqueda.</div>}</div>
       <div className="table-footer"><span>{players.length?currentPage*limit+1:0}–{Math.min((currentPage+1)*limit,players.length)} de {players.length} jugadores · {scope==='all'?'Acumulado':`Jornada ${scope}`}</span>{pageSize!=='all'&&<div className="pagination"><button className="secondary-button" disabled={currentPage===0} onClick={()=>setPage(currentPage-1)}>Anterior</button><span>{currentPage+1} / {pages}</span><button className="secondary-button" disabled={currentPage>=pages-1} onClick={()=>setPage(currentPage+1)}>Siguiente</button></div>}</div>
-      <div className="panel-body"><p className="admin-help">H = 1B + 2B + 3B + HR. IP usa decimales, como en el Excel; ERA se calcula sobre 7 entradas.</p><label className="upload-control capture-grid-responsible">Responsable de la captura<input disabled={busy!==null} required maxLength={100} value={responsible} onChange={e=>setResponsible(e.target.value)}/></label></div>
+      <div className="panel-body"><p className="admin-help">H = 1B + 2B + 3B + HR. IP usa decimales, como en el Excel; ERA se calcula sobre 7 entradas.</p><p className="admin-help">Cada cambio queda en el historial con la cuenta que inició sesión.</p></div>
     </section>
     <History data={data} entity={scope==='all'?'stats':'round'}/>
   </div>;

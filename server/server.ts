@@ -3,7 +3,7 @@ import pg from 'pg';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { registerWrites, gameColumns, InputError } from './writes.ts';
+import { registerWrites, gameColumns, InputError, ensureRoundRows } from './writes.ts';
 import {registerAuth,initializeAdmin} from './auth.ts';
 import {registerImports} from './imports.ts';
 import {registerLeague} from './league.ts';
@@ -37,7 +37,7 @@ async function initialize() {
     if (!(await client.query('SELECT 1 FROM import_sources WHERE sha256=$1',[seed.sha256])).rowCount) {
       const summary = await syncStats(client, seed);
       await client.query('INSERT INTO import_sources(id,filename,sha256,metadata) VALUES((SELECT COALESCE(max(id),0)+1 FROM import_sources),$1,$2,$3)',[seed.source,seed.sha256,{...seed.metadata,sync:summary}]);
-      console.log(`Statistics ${seed.source}: ${summary.playersCreated} players created, ${summary.playersRenamed} renamed, ${summary.statsUpdated} totals updated, ${summary.roundsUpdated} round rows updated, ${summary.unchanged} unchanged.`);
+      console.log(`Statistics ${seed.source}: ${summary.playersCreated} players created, ${summary.playersRenamed} renamed, ${summary.statsUpdated} totals updated, ${summary.roundsUpdated} round rows updated, ${summary.roundsKept} round rows kept from the app, ${summary.unchanged} unchanged.`);
       for (const warning of summary.warnings) console.warn('Statistics:', warning);
     }
     // Cada versión del Excel del rol se aplica una sola vez, identificada por su huella SHA-256.
@@ -48,6 +48,7 @@ async function initialize() {
       console.log(`Schedule ${schedule.source}: ${summary.inserted} games inserted, ${summary.updated} updated, ${summary.restored} restored, ${summary.removed} removed, ${summary.unchanged} unchanged.`);
       for (const warning of summary.warnings) console.warn('Schedule:', warning);
     }
+    await ensureRoundRows(client);
     await client.query("SELECT setval('roster_player_ids',GREATEST((SELECT COALESCE(max(id),1) FROM players),(SELECT last_value FROM roster_player_ids)),true)");
     await client.query('COMMIT');
   } catch (error) { await client.query('ROLLBACK'); throw error; }
