@@ -1,0 +1,195 @@
+/* Administración con los mismos colores y tipografía de la vista pública ("Marcador nocturno").
+   Se carga al final y va anidada bajo .app-shell / .login-screen para ganar a styles.css y admin.css
+   sin tocar su estructura. La lista para imprimir (.official-sheet) conserva el papel blanco. */
+html:has(.app-shell),html:has(.login-screen),html:has(.loading-screen){background:#0b1a13}
+
+.app-shell,.login-screen,.loading-screen:not(.loader-3d){
+  --bg:#0b1a13;--surface:#11261c;--head:#0e2018;--raised:#16301f;--line:#23402f;--line-soft:#1d3527;--line-strong:#3a5a45;
+  --text:#f3f0e4;--soft:#cfd9cc;--mut:#a8b7a6;--accent:#e6b53c;--warn:#f0c36a;--good:#8fdcab;--bad:#f4a79b;
+  --cond:'Barlow Condensed','Arial Narrow',sans-serif;--font-display:var(--cond);--border:var(--line);--muted:var(--mut);
+  color-scheme:dark;background:var(--bg);color:var(--text);font-family:'Barlow','Segoe UI',sans-serif;font-size:15px;line-height:1.45;
+
+  h1,h2,h3{color:var(--text);text-transform:uppercase;letter-spacing:.02em;line-height:1.1;font-weight:700}
+  button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  input:not([type=checkbox]):not([type=file]),select,textarea{background:var(--bg);border:1px solid var(--line-strong);color:var(--text);font-size:15px}
+  .muted{color:var(--mut)}
+  .eyebrow{font-size:12px;color:var(--mut)}
+
+  .primary-button{min-height:40px;background:var(--accent);border-color:var(--accent);color:var(--bg);font-size:14px;font-weight:600}
+  .primary-button:hover:not(:disabled){background:#f4cf6e}
+  .secondary-button{min-height:40px;background:none;border-color:var(--line-strong);color:var(--text);font-size:14px}
+  .secondary-button:hover:not(:disabled){background:var(--raised)}
+  .danger-button{background:#b8452f!important;border-color:#b8452f!important;color:#fff!important}
+  .text-button{color:var(--accent);font-size:14px}
+  .text-button:hover{color:#f4cf6e}
+  .icon-button{color:var(--soft)}
+  .icon-button:hover{background:var(--raised);color:var(--text)}
+  .icon-button.danger{color:var(--bad)}
+  .form-error{background:none;border:1px solid #7a3a30;color:var(--bad);font-size:14px}
+  .form-error button{color:inherit}
+  .form-success{background:none;border:1px solid #2f6b47;color:var(--good);font-size:14px}
+}
+
+.loading-screen:not(.loader-3d){
+  color:var(--accent);
+  p{color:var(--mut);font-size:15px}
+}
+
+.login-screen{
+  .login-card{background:var(--surface);border-color:var(--line);box-shadow:none}
+  .login-brand{color:var(--text);font-family:var(--cond);text-transform:uppercase;letter-spacing:.02em}
+  .login-brand svg{color:var(--accent)}
+  .login-card h1{font-size:34px}
+  .login-card>p{color:var(--mut);font-size:15px}
+  .login-card label{color:var(--soft);font-size:14px}
+  .login-card .primary-button{font-size:15px}
+  .login-back{color:var(--mut);font-size:14px}
+  .login-back:hover{color:var(--text)}
+}
+
+.app-shell{
+  /* Marco */
+  .sidebar{background:var(--head);background-image:none;border-right:1px solid var(--line);color:var(--soft)}
+  .brand{color:var(--text)}
+  .sidebar-section{font-size:12px;color:var(--mut)}
+  .nav-item{color:var(--soft);font-size:15px}
+  .nav-item:hover{background:var(--surface);color:var(--text)}
+  .nav-item.active{background:var(--accent);color:var(--bg)}
+  .nav-dot{background:var(--bg)}
+  .sidebar-season{border-color:var(--line)}
+  .sidebar-season small{font-size:11px;color:var(--mut)}
+  .sidebar-season strong{font-size:14px;color:var(--text)}
+  .sidebar-season p{font-size:13px;color:var(--mut)}
+  .sidebar-bottom{border-color:var(--line);font-size:13px;color:var(--mut)}
+  .status-dot{background:#6fcf8f;box-shadow:none}
+  .status-dot.offline{background:var(--warn)}
+  .topbar{background:var(--bg);border-color:var(--line)}
+  .breadcrumb{font-size:14px;color:var(--mut)}
+  .breadcrumb strong{color:var(--text)}
+  .mobile-toggle{color:var(--text)}
+  .live-pill{background:var(--surface);border-color:var(--line);color:var(--soft);font-size:13px}
+  .topbar-divider{background:var(--line)}
+  .torneo-avatar{background:var(--surface);color:var(--soft);font-size:13px}
+  .page-heading h1{font-size:38px;letter-spacing:.02em;line-height:1.1;color:var(--text)}
+  .page-heading p{font-size:15px;color:var(--mut)}
+  .refresh-button{background:none;border-color:var(--line-strong);color:var(--text);font-size:14px}
+  .refresh-button:hover{background:var(--raised)}
+  .account-strip{font-size:14px;color:var(--mut)}
+  .error-banner{background:none;border-color:#6d6233;color:var(--warn);font-size:14px}
+  .error-banner button{color:inherit}
+  .main-footer{font-size:13px;color:var(--mut)}
+  .main-footer>span:first-child{color:var(--mut)}
+  .footer-separator{color:var(--line-strong)}
+
+  /* Paneles y formularios */
+  .panel{background:var(--surface);border-color:var(--line)}
+  .panel-heading h2{font-size:24px;letter-spacing:.02em}
+  .panel-heading p{font-size:14px;color:var(--mut)}
+  .panel-body p{font-size:14px}
+  .admin-notice{background:var(--head);border-color:var(--line);color:var(--soft);font-size:14px}
+  .admin-help{font-size:13px;color:var(--mut)}
+  .admin-empty{font-size:14px;color:var(--mut)}
+  .form-grid label,.capture-form label,.admin-dialog label,.upload-control,.account-settings label{font-size:14px;color:var(--soft)}
+  .segmented{background:var(--bg);border:1px solid var(--line)}
+  .segmented button{color:var(--soft);font-size:14px;padding:8px 16px}
+  .segmented button.active{background:var(--text);color:var(--bg);box-shadow:none}
+  .check-control{color:var(--soft);font-size:14px}
+  .check-control input{accent-color:var(--accent);width:16px;height:16px}
+  .tiny-badge{background:var(--head);color:var(--mut);font-size:12px}
+  .cell-detail,.preview-counts,.score-detail,.score-hint{font-size:13px;color:var(--mut)}
+  .league-image-preview{background:var(--bg);border-color:var(--line-strong);color:var(--mut)}
+  .rules-text,.rules-list{color:var(--soft);font-size:14px}
+
+  /* Tablas */
+  table{font-size:15px}
+  thead{background:var(--head);color:var(--mut)}
+  th{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);border-color:var(--line-soft);padding:11px 10px}
+  td{font-size:15px;color:var(--soft);border-color:var(--line-soft)}
+  td:first-child{font-size:15px}
+  td strong{color:var(--text)}
+  tbody tr:hover{background:var(--raised);cursor:default}
+  .stat-emphasis,.standings-table .stat-emphasis{color:var(--accent)}
+  .table-footer{border-color:var(--line-soft);color:var(--mut);font-size:13px}
+  .pagination{font-size:14px}
+  .team-logo{border-color:#2c4a37}
+
+  /* Captura de estadísticas */
+  .capture-search{background:var(--bg);border-color:var(--line-strong);color:var(--mut)}
+  .capture-search input{background:none}
+  .capture-pending{font-size:13px;color:var(--mut)}
+  .capture-grid-scroll{scrollbar-color:var(--line-strong) var(--surface)}
+  .capture-grid-table thead th,.capture-grid-table th.capture-player-column,.capture-grid-table th.capture-actions-column{background:var(--head)}
+  .capture-grid-table td,.capture-grid-table td.capture-player-column,.capture-grid-table td.capture-actions-column{background:var(--surface);border-color:var(--line-soft)}
+  .capture-grid-table tr.capture-row-pending td{background:#1c2c18}
+  .capture-grid-table .capture-player-column strong{font-size:14px;color:var(--text)}
+  .capture-player-team{font-size:13px;color:var(--mut)!important}
+  .capture-row-warning{font-size:13px;color:var(--warn)}
+  .capture-grid-table input{background:var(--bg);border-color:var(--line-strong);color:var(--text);font-size:15px}
+  .capture-grid-table input:disabled{background:var(--head)}
+  .capture-grid-table input.capture-cell-changed{border-color:var(--accent);background:#2b2610}
+  .capture-grid-table .capture-calculated{color:var(--accent);font-family:var(--cond);font-size:20px}
+
+  /* Rol, plantillas y tabla de posiciones */
+  .schedule-table td small{font-size:13px;color:var(--mut)}
+  .schedule-team,.standings-table .schedule-team{color:var(--text);font-size:16px}
+  .round-pill,.game-status,.membership{background:var(--head);color:var(--soft);font-size:13px}
+  .game-status.postponed{background:#33290f;color:var(--warn)}
+  .game-status.completed,.membership.yes{background:#143524;color:var(--good)}
+  .game-status.cancelled{background:#3a1c17;color:var(--bad)}
+  .game-score{background:var(--bg);border:1px solid var(--line);color:var(--text);font-family:var(--cond);font-size:22px}
+  .schedule-source{font-size:14px;color:var(--soft)}
+  .schedule-source h3{font-size:20px;color:var(--text)}
+  .schedule-source small{font-size:13px;color:var(--mut)}
+  .standings-reason{font-size:13px;color:var(--mut)}
+  .position-shared{font-size:11px;color:var(--warn)}
+  .standings-rules h3{font-size:20px;color:var(--text)}
+  .order-buttons .icon-button{color:var(--accent)}
+  .game-hits-score{color:var(--soft)}
+  .game-hits-score strong{color:var(--text);font-family:var(--cond);font-size:28px}
+
+  /* Diálogos e historial */
+  .admin-dialog{background:var(--surface);border-color:var(--line-strong);color:var(--text)}
+  .admin-dialog::backdrop{background:#030a07cc}
+  .admin-dialog h2{font-size:26px}
+  .admin-dialog p{font-size:14px;color:var(--soft)}
+  .dialog-header{background:var(--head);border-color:var(--line);color:var(--mut);font-size:12px}
+  .history-list details{border-color:var(--line-soft);font-size:14px}
+  .history-list summary{color:var(--text)}
+  .history-list summary small{font-size:13px;color:var(--mut)}
+  .history-detail pre{background:var(--bg);border-color:var(--line);color:var(--soft);font-size:12px}
+
+  /* Reglamento del torneo */
+  .data-card h2{font-size:24px}
+  .data-card p{font-size:14px;color:var(--soft)}
+  .data-icon{background:var(--head);color:var(--accent)}
+  .data-card dl>div{border-color:var(--line-soft);font-size:14px}
+  .data-card dt{color:var(--mut)}
+  .data-card dd{color:var(--text)}
+  .source-note{font-size:13px!important;color:var(--mut)!important}
+  .connection-heading{color:var(--accent)}
+  .source-observation{background:#33290f;color:var(--warn);font-size:14px}
+  .formula-grid h3{font-size:20px}
+  .formula-grid h4{font-size:16px;color:var(--text)}
+  .formula-grid .formula{color:var(--accent);font-family:var(--cond);font-size:34px}
+
+  /* Lista de jugadores para imprimir: hoja blanca, también en pantalla */
+  .official-sheet{color-scheme:light;background:#fff;color:#1c2b22;border-color:var(--line)}
+  .official-sheet h2,.official-sheet h3{color:#1c2b22;text-transform:none;letter-spacing:0;font-family:'Barlow','Segoe UI',sans-serif}
+  .official-sheet header p,.official-sheet .roster-document-meta span{color:#56655a;font-size:13px}
+  .official-sheet thead{background:#f1f3ee}
+  .official-sheet th{color:#4a5a4d;border-color:#d9dfd5}
+  .official-sheet td{color:#1c2b22;border-color:#e3e8df}
+  .official-sheet tbody tr:hover{background:none}
+  .official-sheet .admin-empty{color:#56655a}
+
+  @media(max-width:760px){
+    .page-heading h1{font-size:28px}
+    .page-heading p{font-size:14px}
+    .panel-heading h2{font-size:21px}
+    .live-pill{font-size:12px}
+  }
+}
+
+@media print{
+  html:has(.official-sheet),.app-shell:has(.official-sheet),.app-shell:has(.official-sheet) .panel{background:#fff!important;color:#000}
+}
