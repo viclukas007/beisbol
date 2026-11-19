@@ -74,9 +74,12 @@ export function registerAuth(app:Express,pool:Pool) {
       sessionCookie(res,session.token);res.json({user:{email:user.email},csrfToken:session.csrfToken});
     }catch(error){await c.query('ROLLBACK');throw error;}finally{c.release();}
   });
-  // Se protege la API, además de la pantalla de administración.
+  // Se protege la API, además de la pantalla de administración. Todo requiere sesión salvo las consultas públicas
+  // de esta lista. Antes se comparaban las rutas protegidas una por una y la comparación se saltaba con mayúsculas
+  // o una diagonal final (/api/Changes, /api/changes/), que Express atiende como la misma ruta.
+  const publicReads=new Set(['/health','/snapshot','/events','/ads','/league/logo']);
   app.use('/api',(req,res,next)=>{
-    const needsAuth=['POST','PUT','PATCH','DELETE'].includes(req.method)||req.path==='/changes'||req.path.startsWith('/admin');
+    const needsAuth=!(['GET','HEAD'].includes(req.method)&&publicReads.has(req.path));
     if(needsAuth&&!res.locals.auth){res.status(401).json({error:'Inicia sesión para administrar el torneo.'});return;}
     if(['POST','PUT','PATCH','DELETE'].includes(req.method)) {
       if(req.get('X-CSRF-Token')!==res.locals.auth.csrf_token){res.status(403).json({error:'La sesión de captura no es válida. Recarga la página.'});return;}
