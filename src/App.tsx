@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Activity, ArrowDownToLine, ArrowRight, ChevronRight, CircleHelp, Database, Diamond, Menu, Shield, Trophy, Users, Wifi, RotateCw, CalendarDays, ClipboardEdit } from 'lucide-react';
+import { Activity, ArrowDownToLine, ArrowRight, ChevronRight, CircleHelp, Database, DatabaseBackup, Diamond, Menu, Shield, Trophy, Users, Wifi, RotateCw, CalendarDays, ClipboardEdit } from 'lucide-react';
 import type { Snapshot } from './types';
 import Capture from './Capture';
 import Schedule from './Schedule';
@@ -11,6 +11,7 @@ import Standings from './Standings';
 import StatisticsRules from './StatisticsRules';
 import Loader from './Loader';
 import GameHits from './GameHits';
+import ExportData from './ExportData';
 import PublicApp from './public/PublicApp';
 import {Login,PasswordSettings} from './Account';
 import type {AuthSession} from './Account';
@@ -18,8 +19,8 @@ import {setCsrfToken,write} from './api';
 import './admin.css';
 
 // Páginas de administración. La vista pública vive en src/public/PublicApp.tsx.
-type Page = 'Reglamento del torneo' | 'Rol de juegos' | 'Captura de estadísticas' | 'Plantillas' | 'Mi cuenta' | 'Tabla de posiciones' | 'Carga masiva' | 'Listas de jugadores' | 'Liga y reglamento' | 'Hits por partido';
-const navigation = [{name:'Captura de estadísticas',icon:ClipboardEdit},{name:'Plantillas',icon:Users},{name:'Rol de juegos',icon:CalendarDays},{name:'Tabla de posiciones',icon:Trophy},{name:'Hits por partido',icon:Activity},{name:'Carga masiva',icon:ArrowDownToLine},{name:'Listas de jugadores',icon:Users},{name:'Liga y reglamento',icon:Shield},{name:'Reglamento del torneo',icon:Database},{name:'Mi cuenta',icon:Shield}] as const;
+type Page = 'Reglamento del torneo' | 'Rol de juegos' | 'Captura de estadísticas' | 'Plantillas' | 'Mi cuenta' | 'Tabla de posiciones' | 'Carga masiva' | 'Listas de jugadores' | 'Liga y reglamento' | 'Hits por partido' | 'Exportar base de datos';
+const navigation = [{name:'Captura de estadísticas',icon:ClipboardEdit},{name:'Plantillas',icon:Users},{name:'Rol de juegos',icon:CalendarDays},{name:'Tabla de posiciones',icon:Trophy},{name:'Hits por partido',icon:Activity},{name:'Carga masiva',icon:ArrowDownToLine},{name:'Listas de jugadores',icon:Users},{name:'Liga y reglamento',icon:Shield},{name:'Reglamento del torneo',icon:Database},{name:'Exportar base de datos',icon:DatabaseBackup},{name:'Mi cuenta',icon:Shield}] as const;
 const headings: Record<Page, [string, string]> = {
   'Carga masiva': ['Actualiza datos desde Excel.', 'Carga jugadores y estadísticas con vista previa.'],
   'Liga y reglamento': ['La identidad y las reglas de tu liga.', 'Imagen, nombre y observaciones del reglamento.'],
@@ -29,6 +30,7 @@ const headings: Record<Page, [string, string]> = {
   'Rol de juegos': ['El calendario del diamante.', 'Primera y segunda vuelta · Temporada 2026–2027.'],
   'Captura de estadísticas': ['Actualiza los números del juego.', 'Guarda bateo y pitcheo por jugador y jornada.'],
   'Plantillas': ['Administra a tus jugadores.', 'Altas, bajas y selección de socios por equipo.'],
+  'Exportar base de datos': ['Llévate una copia de tus datos.', 'Respaldo completo para restaurar y libro de Excel para consultar.'],
   'Mi cuenta': ['Tu cuenta de administración.', 'Actualiza tu contraseña de acceso al backend.'],
   'Reglamento del torneo': ['Las reglas detrás del juego.', 'Origen de las estadísticas, mínimos de participación y fuente del torneo.'],
 };
@@ -116,6 +118,7 @@ export default function App() {
     {page==='Carga masiva'&&<BulkImport data={data} reload={load}/>}
     {page==='Listas de jugadores'&&<OfficialRoster data={data}/>}
     {page==='Liga y reglamento'&&<LeagueSettings data={data} reload={load} onDirty={setDirty}/>}
+    {page==='Exportar base de datos'&&<ExportData data={data}/>}
     {page==='Mi cuenta'&&session?.user&&<PasswordSettings email={session.user.email}/>}
     {page==='Reglamento del torneo' && data.league.rulesNotes && <section className="panel"><div className="panel-heading"><div><h2>Observaciones de la liga</h2></div></div><div className="panel-body"><p className="rules-text">{data.league.rulesNotes}</p></div></section>}
     {page==='Reglamento del torneo' && <div className="data-grid"><section className="panel data-card"><div className="data-icon"><Database size={25}/></div><h2>La fuente del torneo</h2><p className="source-filename">{data.source}</p><dl><div><dt>Equipos</dt><dd>16</dd></div><div><dt>Jugadores con nombre</dt><dd>{data.metadata.namedPlayers}</dd></div><div><dt>Espacios de plantilla</dt><dd>{data.metadata.placeholderSlots}</dd></div><div><dt>Filas de jornadas</dt><dd>{format(data.metadata.roundRows)}</dd></div><div><dt>Jornadas con actividad</dt><dd>{data.metadata.roundsWithActivity.join(', ')}</dd></div></dl><p className="source-note">Se conservan los valores acumulados de cada hoja de equipo. El archivo original permanece como referencia.</p></section><section className="panel data-card"><div className="data-icon"><CircleHelp size={25}/></div><h2>Cómo leer las estadísticas</h2><p>El archivo corresponde a un torneo de sóftbol.</p><dl><div><dt>AVG</dt><dd>HITS / AB</dd></div><div><dt>Mínimo para líder de AVG</dt><dd>{format(data.metadata.minimumAb)} AB → {Math.ceil(data.metadata.minimumAb)} AB</dd></div><div><dt>ERA</dt><dd>(ER × 7) / IP</dd></div><div><dt>Mínimo para líder de ERA</dt><dd>{minIP.toFixed(2)} IP (promedio de IP de {pitchers.length} que han lanzado)</dd></div></dl><p className="source-note">W y L son resultados individuales del pitcher. No representan la clasificación de los equipos. Las IP usan el valor numérico guardado en el Excel.</p></section><section className="panel data-card wide"><div className="connection-heading"><Wifi size={23}/><h2>Actualización de datos</h2><span className="live-pill"><span className={`status-dot ${connected?'':'offline'}`}/>{connected?'Conectado':'Reconectando'}</span></div><p>Los cambios guardados en PostgreSQL actualizan automáticamente esta pantalla. Los datos iniciales son históricos; no representan partidos en curso.</p><p>Última consulta: {new Date(data.updatedAt).toLocaleString('es-MX')}.</p>{data.metadata.masterDifferences.length>0&&<div className="source-observation">Observación de importación: el acumulado de Alejandro Millet difiere entre la hoja maestra y Bucaneros. Esta versión usa el resumen de Bucaneros, conservando ambos valores en los archivos de origen.</div>}</section></div>}

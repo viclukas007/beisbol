@@ -230,3 +230,19 @@ Interpretación registrada de “dominio” para grupos de tres o más: el equip
 - [x] Pantalla de carga con three.js (`src/Loader.tsx`): pelota de sóftbol con costura girando sobre el diamante. Solo al abrir la página, durante 5 segundos como mínimo, para que se vea la animación. El bundle pasa de 332 KB a 815 KB (224 KB gzip) por la librería.
 - [x] Al cambiar de sección se vuelve al inicio de la página.
 - [x] La marca “diamante” del menú lateral se reemplaza por el logo oficial de la liga (también en la pantalla de carga). El nombre de la liga, equipos y temporada siguen al pie del menú.
+
+## Exportar la base de datos (19 de noviembre de 2026)
+
+Solicitud: agregar en administración la exportación de la base de datos.
+
+- [x] Página **Exportar base de datos** en `/admin` (`src/ExportData.tsx`), con dos descargas.
+- [x] Respaldo completo en SQL (`GET /api/admin/export/database.sql`, `server/export.ts`): esquema y datos de las 10 tablas del torneo en una lectura consistente, restaurable con `psql` sobre una base vacía o en uso. Sin `pg_dump`, para no depender de la versión de PostgreSQL del servidor. Quedan fuera cuentas de administración, sesiones, límites de inicio de sesión y vistas previas de cargas.
+- [x] Libro de Excel (`GET /api/admin/export/database.xlsx`): Equipos, Jugadores, Acumulados, Jornadas, Rol de juegos, Hits por partido e Historial.
+- [x] Cada descarga se registra en `audit_log` (`database` / `export`) con el correo de la sesión.
+- [x] Verificación en Docker local: sin sesión responde 401; el respaldo se restauró dos veces en una base de prueba (vacía y con datos) y las 10 tablas quedaron idénticas a la original (conteo y huella MD5 por tabla), con los contadores de ID en su valor. La pantalla se probó en Chrome con las dos descargas. La base de prueba, la sesión temporal y los registros de exportación de la prueba se eliminaron.
+- [ ] Restauración desde la app (subir un respaldo): no solicitada; por ahora se restaura con `psql`, como describe el README.
+
+### Corrección de seguridad encontrada en la revisión previa al push (19 de noviembre de 2026)
+
+- [x] La protección de la API comparaba las rutas de administración una por una, distinguiendo mayúsculas, mientras Express las atiende sin distinguirlas ni exigir la diagonal final. Sin iniciar sesión, `/api/Changes` o `/api/changes/` devolvían el historial y `/api/Admin/roster.csv`, `/api/Admin/templates/*.csv` y `/api/Admin/imports` sus datos. Existía desde que se agregó el inicio de sesión; las escrituras no estaban afectadas (método y token CSRF).
+- [x] `server/auth.ts` ahora exige sesión en toda la API salvo una lista de consultas públicas (`/health`, `/snapshot`, `/events`, `/ads`, `/league/logo`). Probado en Docker local: 15 variantes sin sesión responden 401, las públicas y el inicio de sesión siguen funcionando, y la administración con sesión (consultas, descargas y cierre de sesión con CSRF) funciona igual.

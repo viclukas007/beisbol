@@ -8,6 +8,7 @@ import {registerAuth,initializeAdmin} from './auth.ts';
 import {registerImports} from './imports.ts';
 import {registerLeague} from './league.ts';
 import {registerGameHits} from './game-hits.ts';
+import {registerExport} from './export.ts';
 import {syncSchedule} from './schedule-sync.ts';
 import {syncStats} from './stats-sync.ts';
 
@@ -74,6 +75,7 @@ registerWrites(app,pool);
 registerImports(app,pool);
 registerLeague(app,pool);
 registerGameHits(app,pool);
+registerExport(app,pool,path.join(root,'server/schema.sql'));
 app.get('/api/health', async (_req, res) => {
   try { await pool.query('SELECT 1'); res.json({ status: 'ok', database: 'postgresql' }); }
   catch { res.status(503).json({ status: 'unavailable' }); }

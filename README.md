@@ -77,6 +77,7 @@ En `/admin`:
 - **Liga y reglamento:** cargar la imagen oficial, editar el nombre y las observaciones que se muestran en Reglamento del torneo.
 - **Tabla de posiciones (orden manual):** la tabla de administración muestra flechas ↑/↓ en cada equipo. El primer movimiento fija el orden visible como orden manual de ese alcance (temporada, primera o segunda vuelta) y a partir de ahí la tabla pública lo respeta aunque lleguen nuevos resultados; el botón **Volver al orden automático** restablece el reglamento. Es un respaldo para cuando el criterio automático no aplique (por ejemplo, tras un volado). Cada cambio queda en el historial.
 - **Hits por partido:** capturar los hits de cada jugador de un partido finalizado.
+- **Exportar base de datos:** descargar un respaldo completo en SQL, restaurable en PostgreSQL, o un libro de Excel con los datos para consultar (ver “Exportar y restaurar la base de datos”).
 
 La captura por jornada aplica únicamente la diferencia contra la versión anterior al acumulado, conservando los ajustes históricos importados. Un guardado sin cambios no suma estadísticas de nuevo. La corrección directa del acumulado conserva los registros de jornadas. Las versiones evitan sobrescribir cambios de otra ventana.
 
@@ -104,6 +105,26 @@ También se puede cargar `Estadisticas_Softbol_Torneo_Completo vfinal.xlsx`: se 
 
 No mezclar en una misma carga acumulados y jornadas del mismo jugador. Si los ajustes históricos dejan un acumulado negativo al cambiar una jornada, corregir primero el acumulado histórico.
 
+## Exportar y restaurar la base de datos
+
+En **Exportar base de datos** (`/admin`) hay dos descargas. Ambas leen todas las tablas del mismo instante, aunque alguien esté capturando, y cada descarga queda en el historial con el correo de la sesión.
+
+- **Respaldo completo (.sql)**, `diamante-respaldo-AAAA-MM-DD-HHMM.sql`: el esquema y los datos de `import_sources`, `schedule_imports`, `teams`, `players`, `player_stats`, `round_stats`, `games`, `game_player_hits`, `league_settings` (con la imagen de la liga) y `audit_log`. No incluye `admin_users`, `admin_sessions`, `login_limits` ni `import_batches`: el archivo no lleva contraseñas, sesiones ni vistas previas de cargas.
+- **Datos en Excel (.xlsx)**, `diamante-datos-AAAA-MM-DD-HHMM.xlsx`: hojas Equipos, Jugadores, Acumulados, Jornadas, Rol de juegos, Hits por partido e Historial, con nombres en lugar de IDs internos. Incluye jugadores dados de baja y juegos retirados. Es para consultar o compartir; no sirve para restaurar.
+
+La hora del nombre del archivo es la de Mérida. El código está en `server/export.ts` y `src/ExportData.tsx`.
+
+Restaurar el respaldo **reemplaza los datos del torneo** de la base de destino (vacía esas tablas y carga las del archivo en una sola transacción; si algo falla, la base queda como estaba). La cuenta de administración de la base de destino no se toca. Funciona sobre una base en uso o sobre una base vacía, porque el archivo crea las tablas que falten. En la instalación local de Docker:
+
+```powershell
+docker compose cp "diamante-respaldo-2026-11-19-0930.sql" db:/tmp/respaldo.sql
+docker compose exec db psql -U diamante -d diamante -v ON_ERROR_STOP=1 -f /tmp/respaldo.sql
+docker compose exec db rm /tmp/respaldo.sql
+docker compose restart app
+```
+
+En otro servidor (por ejemplo EasyPanel), ejecutar el archivo con `psql -v ON_ERROR_STOP=1 -d "URL_DE_CONEXION" -f archivo.sql` y reiniciar la app. Al arrancar, la app compara las huellas de `data/seed.json` y `data/schedule.json` con las importaciones registradas en el respaldo: si el respaldo es anterior a la versión desplegada del Excel, vuelve a aplicar esa versión.
+
 ## Tabla de posiciones, imagen y listas
 
 **Tabla de posiciones** usa únicamente juegos finalizados, con los dos marcadores, que no estén retirados. No utiliza W/L de los pitchers. Se puede ver la temporada completa o una vuelta.
@@ -128,7 +149,7 @@ El backend `/admin` requiere inicio de sesión. El administrador de esta instala
 
 Para cambiarla: **Mi cuenta → Cambiar contraseña**. Se pide la contraseña actual, la nueva y su confirmación. La nueva clave debe tener entre 8 y 128 caracteres. El cambio cierra las otras sesiones y conserva la sesión actual. Reiniciar Docker conserva la contraseña guardada en PostgreSQL.
 
-Las claves se almacenan con scrypt y sal aleatoria. Las sesiones de 12 horas usan cookies HttpOnly y SameSite Strict; la base guarda una huella del token de sesión. Las escrituras, los datos de administración y la bitácora requieren sesión, y las escrituras llevan un token CSRF. La bitácora usa el correo del administrador como responsable. Hay límite de intentos de inicio de sesión.
+Las claves se almacenan con scrypt y sal aleatoria. Las sesiones de 12 horas usan cookies HttpOnly y SameSite Strict; la base guarda una huella del token de sesión. Toda la API requiere sesión salvo las consultas públicas (`/api/health`, `/api/snapshot`, `/api/events`, `/api/ads`, `/api/league/logo`) y las rutas de `/api/auth`; una ruta nueva queda protegida mientras no se agregue a esa lista en `server/auth.ts`. Las escrituras llevan además un token CSRF. La bitácora usa el correo del administrador como responsable. Hay límite de intentos de inicio de sesión.
 
 `ADMIN_EMAIL` y `ADMIN_PASSWORD_HASH` en `.env` se usan únicamente para crear la primera cuenta si la base todavía no tiene un administrador. No reemplazan una contraseña cambiada desde la app. Para otra instalación, definirlos junto con `POSTGRES_PASSWORD`. El hash tiene el formato `scrypt:salt_hex:hash_hex`, con N=32768, r=8, p=1, clave de 64 bytes y sal de 16 bytes codificada como texto hexadecimal.
 
@@ -212,6 +233,7 @@ Vite abre el frontend en el puerto 5173 y redirige `/api` a la app de Docker en 
 - `GET /api/admin/imports`: historial de 30 cargas recientes.
 - `GET /api/admin/templates/players.csv` y `/api/admin/templates/stats.csv`: plantillas con datos actuales; filtros `teamId`, `round` y `blank=1`.
 - `GET /api/admin/roster.csv`: lista de jugadores activos para el equipo seleccionado.
+- `GET /api/admin/export/database.sql` y `/api/admin/export/database.xlsx`: respaldo completo en SQL y libro de Excel con los datos; requieren sesión.
 - `PUT /api/admin/league/settings`: nombre de la liga y observaciones del reglamento.
 - `PUT /api/admin/league/logo`: imagen oficial; `GET /api/league/logo` la sirve públicamente.
 - `PUT /api/admin/league/standings-order`: orden manual de la tabla de posiciones (`scope` `all`, `1` o `2`; `order` con los 16 IDs de equipo o `null` para volver al automático; `version` de la liga).
